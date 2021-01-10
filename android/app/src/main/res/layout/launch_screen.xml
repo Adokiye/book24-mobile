@@ -3,10 +3,14 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_launch_screen">
-
-    <ImageView
+    <pl.droidsonroids.gif.GifImageView
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:src="@drawable/logo"
+    />
+    <!-- <ImageView
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_gravity="center"
-        android:src="@drawable/book24logo"/>
+        android:src="@drawable/book24logo"/> -->
 </FrameLayout>

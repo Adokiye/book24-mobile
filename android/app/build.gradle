@@ -185,7 +185,7 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
-
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.19'
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
   // Multidex
     implementation 'com.android.support:multidex:1.0.3'
