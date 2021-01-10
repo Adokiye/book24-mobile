@@ -25,10 +25,15 @@ import CruiseFilter from '@screens/CruiseFilter';
 import EventFilter from '@screens/EventFilter';
 import SelectDarkOption from '@screens/SelectDarkOption';
 import SelectFontOption from '@screens/SelectFontOption';
+import AsyncStorage from '@react-native-community/async-storage';
+import {useDispatch} from 'react-redux';
+import {AuthActions} from '@actions';
+  
 
 const RootStack = createStackNavigator();
 
 export default function Navigator() {
+  const dispatch = useDispatch();
   const storeLanguage = useSelector(state => state.application.language);
   const {theme, colors} = useTheme();
   const isDarkMode = useDarkMode();
@@ -40,16 +45,27 @@ export default function Navigator() {
   });
 
   useEffect(() => {
+initialSetup()
+  });
+
+  const initialSetup = async()=>{
     i18n.use(initReactI18next).init({
       resources: BaseSetting.resourcesLanguage,
       lng: storeLanguage ?? BaseSetting.defaultLanguage,
       fallbackLng: BaseSetting.defaultLanguage,
     });
-    console.log('ddd')
+    let token = await AsyncStorage.getItem('token');
+    if (token != null && token != '') {
+      dispatch(
+        AuthActions.authentication(true, (response) => {
+          //  navigation.navigate('Home');
+        }),
+      );
+    }
   SplashScreen.hide();
     StatusBar.setBackgroundColor(colors.primary, true);
     StatusBar.setBarStyle(isDarkMode ? 'light-content' : 'dark-content', true);
-  }, []);
+  }
 
   return (
     <DarkModeProvider>
@@ -57,7 +73,7 @@ export default function Navigator() {
         <RootStack.Navigator
           mode="modal"
           headerMode="none"
-          initialRouteName="Loading">
+          initialRouteName="Main">
           <RootStack.Screen
             name="Loading"
             component={Loading}

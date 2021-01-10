@@ -40,7 +40,7 @@ export default function Loading({navigation}) {
           size="large"
           color={'#1281dd'}
           style={{
-            marginTop: 20,
+            marginTop: 50,
           }}
         />
       </View>
