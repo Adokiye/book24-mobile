@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {StatusBar, StyleSheet} from 'react-native';
+import {StatusBar, Platform,StyleSheet} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {DarkModeProvider, useDarkMode} from 'react-native-dark-mode';
@@ -63,8 +63,8 @@ initialSetup()
       );
     }
   SplashScreen.hide();
-    StatusBar.setBackgroundColor(colors.primary, true);
-    StatusBar.setBarStyle(isDarkMode ? 'light-content' : 'dark-content', true);
+  // Platform.OS == "android" && StatusBar.setBackgroundColor(colors.primary, true);
+  // Platform.OS == "android" &&  StatusBar.setBarStyle(isDarkMode ? 'light-content' : 'dark-content', true);
   }
 
   return (
