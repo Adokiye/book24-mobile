@@ -20,9 +20,7 @@ export default function Loading({navigation}) {
         }),
       );
     }
-    setTimeout(() => {
       navigation.replace('Main');
-    }, 500);
   };
   useEffect(() => {
     console.log('loading');

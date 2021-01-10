@@ -45,26 +45,18 @@ export default function Navigator() {
   });
 
   useEffect(() => {
-initialSetup()
-  });
-
-  const initialSetup = async()=>{
     i18n.use(initReactI18next).init({
       resources: BaseSetting.resourcesLanguage,
       lng: storeLanguage ?? BaseSetting.defaultLanguage,
       fallbackLng: BaseSetting.defaultLanguage,
     });
-    let token = await AsyncStorage.getItem('token');
-    if (token != null && token != '') {
-      dispatch(
-        AuthActions.authentication(true, (response) => {
-          //  navigation.navigate('Home');
-        }),
-      );
-    }
   SplashScreen.hide();
-  // Platform.OS == "android" && StatusBar.setBackgroundColor(colors.primary, true);
-  // Platform.OS == "android" &&  StatusBar.setBarStyle(isDarkMode ? 'light-content' : 'dark-content', true);
+    StatusBar.setBackgroundColor(colors.primary, true);
+    StatusBar.setBarStyle(isDarkMode ? 'light-content' : 'dark-content', true);
+  });
+
+  const initialSetup = async()=>{
+
   }
 
   return (
