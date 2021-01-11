@@ -1,6 +1,6 @@
-import React, {useState,useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {FlatList, RefreshControl, View, Animated} from 'react-native';
-import {BaseStyle, useTheme,BASE_URL} from '@config';
+import {BaseStyle, useTheme, BASE_URL} from '@config';
 import {Header, SafeAreaView, Icon, CruiseItem, FilterSort} from '@components';
 import styles from './styles';
 import * as Utils from '@utils';
@@ -16,8 +16,8 @@ export default function Cruise({navigation}) {
 
   const [refreshing] = useState(false);
   const [modeView, setModeView] = useState('grid');
-  const [load, setLoad] = useState(false)
-  const [cruise,setCruise] = useState([]);
+  const [load, setLoad] = useState(false);
+  const [cruise, setCruise] = useState([]);
   const clampedScroll = Animated.diffClamp(
     Animated.add(
       scrollAnim.interpolate({
@@ -31,13 +31,13 @@ export default function Cruise({navigation}) {
     40,
   );
 
-  useEffect(()=>{
-    getData()
-    },[])
-  
-    const getData = async()=>{
-      setLoad(true)
-      await axios
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = async () => {
+    setLoad(true);
+    await axios
       .get(BASE_URL + 'cruise')
       .then((res) => {
         // console.log(res.data.rows)
@@ -48,8 +48,9 @@ export default function Cruise({navigation}) {
         console.log(err);
         //   setError(err.message);
         //    setLoad(true)
-      }).finally(()=>setLoad(false));
-    }
+      })
+      .finally(() => setLoad(false));
+  };
 
   /**
    * call when change sort
@@ -136,13 +137,10 @@ export default function Cruise({navigation}) {
                 <CruiseItem
                   block
                   image={item.images[0].url}
-
                   brand={item.brand}
                   name={item.name}
                   location={item.address}
-                  price={
-                    '\u20a6' +parseInt(item.price)||null
-                  }
+                  price={'\u20a6' + parseInt(item.price) || null}
                   saleOff={item.saleOff}
                   rate={item.rate}
                   rateStatus={item.rateStatus}
@@ -150,7 +148,7 @@ export default function Cruise({navigation}) {
                   rateCount={item.rateCount}
                   time={item.time}
                   itinerary={item.itinerary}
-                  onPress={() => navigation.navigate('CruiseDetail',{item})}
+                  onPress={() => navigation.navigate('CruiseDetail', {item})}
                   onPressTag={() => navigation.navigate('Review')}
                 />
               )}
@@ -209,22 +207,19 @@ export default function Cruise({navigation}) {
                 <CruiseItem
                   grid
                   image={item.images[0].url}
-
-brand={item.brand}
-name={item.name}
-location={item.address}
-price={
-  '\u20a6' +parseInt(item.price)||null
-}
-saleOff={item.saleOff}
-rate={item.rate}
-rateStatus={item.rateStatus}
-numReviews={item.numReviews}
-rateCount={item.rateCount}
-time={item.time}
-itinerary={item.itinerary}
-onPress={() => navigation.navigate('CruiseDetail',{item})}
-onPressTag={() => navigation.navigate('Review')}
+                  brand={item.brand}
+                  name={item.name}
+                  location={item.address}
+                  price={'\u20a6' + parseInt(item.price) || null}
+                  saleOff={item.saleOff}
+                  rate={item.rate}
+                  rateStatus={item.rateStatus}
+                  numReviews={item.numReviews}
+                  rateCount={item.rateCount}
+                  time={item.time}
+                  itinerary={item.itinerary}
+                  onPress={() => navigation.navigate('CruiseDetail', {item})}
+                  onPressTag={() => navigation.navigate('Review')}
                   style={{
                     marginBottom: 10,
                     marginLeft: 15,
@@ -283,25 +278,22 @@ onPressTag={() => navigation.navigate('Review')}
                 <CruiseItem
                   list
                   image={item.images[0].url}
-
-brand={item.brand}
-name={item.name}
-location={item.address}
-price={
-  '\u20a6' +parseInt(item.price)||null
-}
-saleOff={item.saleOff}
-rate={item.rate}
-rateStatus={item.rateStatus}
-numReviews={item.numReviews}
-rateCount={item.rateCount}
-time={item.time}
-itinerary={item.itinerary}
-onPressTag={() => navigation.navigate('Review')}
+                  brand={item.brand}
+                  name={item.name}
+                  location={item.address}
+                  price={'\u20a6' + parseInt(item.price) || null}
+                  saleOff={item.saleOff}
+                  rate={item.rate}
+                  rateStatus={item.rateStatus}
+                  numReviews={item.numReviews}
+                  rateCount={item.rateCount}
+                  time={item.time}
+                  itinerary={item.itinerary}
+                  onPressTag={() => navigation.navigate('Review')}
                   style={{
                     marginBottom: 20,
                   }}
-                  onPress={() => navigation.navigate('CruiseDetail',{item})}
+                  onPress={() => navigation.navigate('CruiseDetail', {item})}
                 />
               )}
             />
@@ -361,11 +353,11 @@ onPressTag={() => navigation.navigate('Review')}
                   name={item.name}
                   location={item.location}
                   price={
-                        '\u20a6' +
-                        parseInt(item.price)
-                          .toString()
-                          .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                      }
+                    '\u20a6' +
+                    parseInt(item.price)
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                  }
                   saleOff={item.saleOff}
                   rate={item.rate}
                   rateStatus={item.rateStatus}
@@ -373,7 +365,9 @@ onPressTag={() => navigation.navigate('Review')}
                   rateCount={item.rateCount}
                   time={item.time}
                   itinerary={item.itinerary}
-                  onPress={() => navigation.navigate('CruiseDetail',{item})}
+                  onPress={() =>
+                    navigation.navigate('CruiseDetail', {item, cruises:cruise})
+                  }
                   onPressTag={() => navigation.navigate('Preview')}
                 />
               )}
@@ -399,7 +393,7 @@ onPressTag={() => navigation.navigate('Review')}
     <SafeAreaView style={BaseStyle.safeAreaView} forceInset={{top: 'always'}}>
       <Header
         title={t('Cruise')}
-       // subTitle="01 Aug 2019, 4 Days 5 Nights"
+        // subTitle="01 Aug 2019, 4 Days 5 Nights"
         renderLeft={() => {
           return (
             <Icon

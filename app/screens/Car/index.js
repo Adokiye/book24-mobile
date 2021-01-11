@@ -397,7 +397,7 @@ export default function Car({navigation}) {
                     marginLeft: 15,
                   }}
                   onPress={() => {
-                    navigation.navigate('CarDetail', {item});
+                    navigation.navigate('CarDetail', {item,cars});
                   }}
                 />
               )}
