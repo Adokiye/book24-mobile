@@ -38,7 +38,7 @@ import styles from "./styles";
 import { HelpBlockData } from "@data";
 import { useTranslation } from "react-i18next";
 
-export default function CruiseDetail({ navigation, route }) {
+export default function ActivityDetail({ navigation, route }) {
   const dispatch = useDispatch();
   const { item } = route.params;
   const { colors } = useTheme();
@@ -47,7 +47,7 @@ export default function CruiseDetail({ navigation, route }) {
   console.log(item);
   console.log("----");
   const { features, bio } = item;
-  const cruiseData = item;
+  const activityData = item;
 
   const [heightHeader, setHeightHeader] = useState(Utils.heightHeader());
   const [renderMapView, setRenderMapView] = useState(false);
@@ -104,12 +104,12 @@ export default function CruiseDetail({ navigation, route }) {
         price: parseInt(room.price),
         // check_in_date: book_in_date,
         // check_out_date: book_out_date,
-        cruise_id: parseInt(item.id),
+        activity_id: parseInt(item.id),
         // no_of_adults: no_of_adults,
         // no_of_children: no_of_children,
       }
       dispatch(setOrderData(new_data))
-      dispatch(setOrderUrl('cruiseBooking'))
+      dispatch(setOrderUrl('activityBooking'))
       dispatch(setOrderPrice(parseInt(room.price)))
       dispatch(setOrderImage(item.images && item.images[0] && item.images[0].url))
       // this.props.setOrderCheckInDate(moment(book_in_date).format('MMMM DDDD YYYY HH:mm:ss'))
@@ -136,12 +136,12 @@ export default function CruiseDetail({ navigation, route }) {
         price: parseInt(item.rooms[0].price),
         // check_in_date: book_in_date,
         // check_out_date: book_out_date,
-        cruise_id: parseInt(item.id),
+        activity_id: parseInt(item.id),
         // no_of_adults: no_of_adults,
         // no_of_children: no_of_children,
       }
       dispatch(setOrderData(new_data))
-      dispatch(setOrderUrl('cruiseBooking'))
+      dispatch(setOrderUrl('activityBooking'))
       dispatch(setOrderPrice(parseInt(item.rooms[0].price)))
       dispatch(setOrderImage(item.images && item.images[0] && item.images[0].url))
       // this.props.setOrderCheckInDate(moment(book_in_date).format('MMMM DDDD YYYY HH:mm:ss'))
@@ -483,11 +483,11 @@ console.log(item.images[0].url);
                     style={{ marginTop: 10 }}
                     onPress={() => {
                       return bookRoom(item);
-                      // navigation.navigate("CruiseInformation", {
+                      // navigation.navigate("ActivityInformation", {
                       //   item,
                       //   features,
                       //   bio,
-                      //   cruiseData,
+                      //   activityData,
                       // });
                     }}
                   />
@@ -529,7 +529,7 @@ console.log(item.images[0].url);
                     style={{ marginRight: 15 }}
                     title="South Travon"
                     date="6 Deals Left"
-                    description="Andaz Tokyo Toranomon Hills is one of the newest luxury cruises in Tokyo. Located in one of the uprising areas of Tokyo"
+                    description="Andaz Tokyo Toranomon Hills is one of the newest luxury activitys in Tokyo. Located in one of the uprising areas of Tokyo"
                     image={item.image}
                     onPress={() => {
                       navigation.navigate("PostDetail");
@@ -565,7 +565,7 @@ console.log(item.images[0].url);
                     Good Location
                   </Text>
                   <Text body2>
-                    {item.name} is one of the newest luxury cruises in{" "}
+                    {item.name} is one of the newest luxury activitys in{" "}
                     {item.location}. Located in one of the uprising areas of
                     {item.location}
                   </Text>

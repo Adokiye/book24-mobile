@@ -150,7 +150,7 @@ export default function Cruise({navigation}) {
                   rateCount={item.rateCount}
                   time={item.time}
                   itinerary={item.itinerary}
-                  onPress={() => navigation.navigate('CruiseDetail')}
+                  onPress={() => navigation.navigate('CruiseDetail',{item})}
                   onPressTag={() => navigation.navigate('Review')}
                 />
               )}
@@ -223,7 +223,7 @@ numReviews={item.numReviews}
 rateCount={item.rateCount}
 time={item.time}
 itinerary={item.itinerary}
-onPress={() => navigation.navigate('CruiseDetail')}
+onPress={() => navigation.navigate('CruiseDetail',{item})}
 onPressTag={() => navigation.navigate('Review')}
                   style={{
                     marginBottom: 10,
@@ -301,7 +301,7 @@ onPressTag={() => navigation.navigate('Review')}
                   style={{
                     marginBottom: 20,
                   }}
-                  onPress={() => navigation.navigate('CruiseDetail')}
+                  onPress={() => navigation.navigate('CruiseDetail',{item})}
                 />
               )}
             />
@@ -368,7 +368,7 @@ onPressTag={() => navigation.navigate('Review')}
                   rateCount={item.rateCount}
                   time={item.time}
                   itinerary={item.itinerary}
-                  onPress={() => navigation.navigate('CruiseDetail')}
+                  onPress={() => navigation.navigate('CruiseDetail',{item})}
                   onPressTag={() => navigation.navigate('Preview')}
                 />
               )}

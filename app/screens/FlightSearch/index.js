@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, ScrollView} from 'react-native';
+import {View, ScrollView, Text} from 'react-native';
 import {BaseStyle, Images, useTheme} from '@config';
 import {
   Header,
@@ -39,7 +39,7 @@ export default function FlightSearch({navigation}) {
    * select FlightType
    * @param {*} round
    */
-  const onSetFlightType = round => {
+  const onSetFlightType = (round) => {
     setRound(round);
   };
 
@@ -47,18 +47,18 @@ export default function FlightSearch({navigation}) {
    * onSelect Flight
    * @param {*} type
    */
-  const onSelectFlight = type => {
+  const onSelectFlight = (type) => {
     switch (type) {
       case 'to':
         navigation.navigate('SelectFlight', {
           selected: to,
-          onChangeAir: air => setTo(air),
+          onChangeAir: (air) => setTo(air),
         });
         break;
       case 'from':
         navigation.navigate('SelectFlight', {
           selected: from,
-          onChangeAir: air => setFrom(air),
+          onChangeAir: (air) => setFrom(air),
         });
         break;
       default:
@@ -85,7 +85,12 @@ export default function FlightSearch({navigation}) {
         }}
       />
       <ScrollView contentContainerStyle={styles.contain} style={{flex: 1}}>
-        <View style={styles.flightType}>
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <Text style={{fontSize: 22, textAlign: 'center', color: '#000'}}>
+            COMING SOON
+          </Text>
+        </View>
+        {/* <View style={styles.flightType}>
           <Tag
             outline={!round}
             primary={round}
@@ -131,9 +136,9 @@ export default function FlightSearch({navigation}) {
             detail={`<= 2 ${t('years')}`}
             value={1}
           />
-        </View>
+        </View> */}
       </ScrollView>
-      <View style={{padding: 20}}>
+      {/* <View style={{padding: 20}}>
         <Button
           loading={loading}
           full
@@ -146,7 +151,7 @@ export default function FlightSearch({navigation}) {
           }}>
           {t('search')}
         </Button>
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 }

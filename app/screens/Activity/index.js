@@ -1,20 +1,37 @@
 import React, {useState, useEffect} from 'react';
-import {FlatList, RefreshControl, View, Animated} from 'react-native';
+import {
+  FlatList,
+  RefreshControl,
+  View,
+  Animated,
+  ActivityIndicator,
+} from 'react-native';
 import {BaseStyle, useTheme, BASE_URL} from '@config';
-import {useTranslation} from 'react-i18next';
-import {Header, SafeAreaView, Icon, CarItem, FilterSort} from '@components';
+import {
+  Header,
+  SafeAreaView,
+  Icon,
+  HotelItem,
+  FilterSort,
+  Loader,
+} from '@components';
 import styles from './styles';
 import * as Utils from '@utils';
-import {CarData} from '@data';
+import {useTranslation} from 'react-i18next';
+import {HotelData} from '@data';
 import axios from 'axios';
+import {PromotionData} from '@data';
 
-export default function Car({navigation}) {
+export default function Activity({navigation}) {
   const {colors} = useTheme();
   const {t} = useTranslation();
+
+  const [modeView, setModeView] = useState('grid');
+  const [activities, setActivities] = useState([]);
+  const [load, setLoad] = useState(false);
+  const [refreshing] = useState(false);
   const scrollAnim = new Animated.Value(0);
   const offsetAnim = new Animated.Value(0);
-  const [load, setLoad] = useState(false);
-  const [error,setError] = useState('')
   const clampedScroll = Animated.diffClamp(
     Animated.add(
       scrollAnim.interpolate({
@@ -28,32 +45,6 @@ export default function Car({navigation}) {
     40,
   );
 
-  const [refreshing] = useState(false);
-  const [modeView, setModeView] = useState('block');
-  const [cars, setCars] = useState([]);
-
-  useEffect(() => {
-    getData();
-  }, []);
-
-  const getData = async () => {
-    setLoad(true)
-    await axios
-      .get(BASE_URL + 'cars')
-      .then(async (res) => {
-        // console.log(res.data.rows)
-        setCars(res.data.rows);
-      })
-      .catch((err) => {
-        console.log(err);
-       setError(err.message);
-        //    setLoad(true)
-      }).finally(()=>setLoad(false));
-  };
-
-  /**
-   * Called when onChange sort
-   */
   const onChangeSort = () => {};
 
   /**
@@ -86,8 +77,7 @@ export default function Car({navigation}) {
 
         break;
       default:
-        setModeView('block');
-
+        setModeView('grid');
         break;
     }
   };
@@ -133,31 +123,27 @@ export default function Car({navigation}) {
                 ],
                 {useNativeDriver: true},
               )}
-              data={cars}
+              data={activities}
               key={'block'}
               keyExtractor={(item, index) => item.id}
               renderItem={({item, index}) => (
-                <CarItem
+                <HotelItem
                   block
-                  image={
-                    item.images != null && item.images.length > 0
-                      ? item.images[0].url
-                      : ''
-                  }
-                  title={item.title || item.description}
+                  image={item.images[0].url}
                   name={item.name}
-                  price={item.price}
-                  per={item.per}
+                  location={item.address}
+                  price={'\u20a6' + item.rooms[0].price}
+                  //available={item.available}
                   rate={item.rate}
+                  rateStatus={item.rateStatus}
                   numReviews={item.numReviews}
-                  services={item.services}
+                  services={item.features}
+                  hotel_type={item.hotel_type}
                   style={{
-                    marginBottom: 15,
-                    marginLeft: 15,
+                    paddingBottom: 10,
                   }}
-                  onPress={() => {
-                    navigation.navigate('CarDetail', {item});
-                  }}
+                  onPress={() => navigation.navigate('HotelDetail', {item})}
+                  onPressTag={() => navigation.navigate('Review')}
                 />
               )}
             />
@@ -208,30 +194,26 @@ export default function Car({navigation}) {
                 {useNativeDriver: true},
               )}
               numColumns={2}
-              data={cars}
+              data={activities}
               key={'grid'}
               keyExtractor={(item, index) => item.id}
               renderItem={({item, index}) => (
-                <CarItem
+                <HotelItem
                   grid
-                  image={
-                    item.images != null && item.images.length > 0
-                      ? item.images[0].url
-                      : ''
-                  }
-                  title={item.title || item.description}
+                  image={item.images[0].url}
                   name={item.name}
-                  price={item.price}
-                  per={item.per}
+                  location={item.address}
+                  price={'\u20a6' + item.rooms[0].price}
+                  //available={item.available}
                   rate={item.rate}
+                  rateStatus={item.rateStatus}
                   numReviews={item.numReviews}
-                  services={item.services}
+                  services={item.features}
+                  hotel_type={item.hotel_type}
+                  onPress={() => navigation.navigate('HotelDetail', {item})}
                   style={{
                     marginBottom: 15,
                     marginLeft: 15,
-                  }}
-                  onPress={() => {
-                    navigation.navigate('CarDetail', {item});
                   }}
                 />
               )}
@@ -252,7 +234,6 @@ export default function Car({navigation}) {
             </Animated.View>
           </View>
         );
-
       case 'list':
         return (
           <View style={{flex: 1}}>
@@ -281,31 +262,27 @@ export default function Car({navigation}) {
                 ],
                 {useNativeDriver: true},
               )}
-              data={cars}
+              data={activities}
               key={'list'}
               keyExtractor={(item, index) => item.id}
               renderItem={({item, index}) => (
-                <CarItem
+                <HotelItem
                   list
-                  image={
-                    item.images != null && item.images.length > 0
-                      ? item.images[0].url
-                      : ''
-                  }
-                  title={item.title || item.description}
+                  image={item.images[0].url}
                   name={item.name}
-                  price={item.price}
-                  per={item.per}
+                  location={item.address}
+                  price={'\u20a6' + item.rooms[0].price}
+                  //available={item.available}
                   rate={item.rate}
+                  rateStatus={item.rateStatus}
                   numReviews={item.numReviews}
-                  services={item.services}
+                  services={item.features}
+                  hotel_type={item.hotel_type}
                   style={{
-                    marginBottom: 15,
-                    marginLeft: 15,
+                    paddingBottom: 10,
                   }}
-                  onPress={() => {
-                    navigation.navigate('CarDetail', {item});
-                  }}
+                  onPress={() => navigation.navigate('HotelDetail', {item})}
+                  onPressTag={() => navigation.navigate('Review')}
                 />
               )}
             />
@@ -331,7 +308,6 @@ export default function Car({navigation}) {
             <Animated.FlatList
               contentContainerStyle={{
                 paddingTop: 50,
-                paddingBottom: 20,
               }}
               refreshControl={
                 <RefreshControl
@@ -354,31 +330,27 @@ export default function Car({navigation}) {
                 ],
                 {useNativeDriver: true},
               )}
-              data={cars}
-              key={'block'}
+              data={activities}
+              key={'grid'}
               keyExtractor={(item, index) => item.id}
               renderItem={({item, index}) => (
-                <CarItem
-                  block
-                  image={
-                    item.images != null && item.images.length > 0
-                      ? item.images[0].url
-                      : ''
-                  }
-                  title={item.title || item.description}
+                <HotelItem
+                  grid
+                  image={item.images[0].url}
                   name={item.name}
-                  price={item.price}
-                  per={item.per}
+                  location={item.address}
+                  price={'h'}
+                  //available={item.available}
                   rate={item.rate}
+                  rateStatus={item.rateStatus}
                   numReviews={item.numReviews}
-                  services={item.services}
+                  services={item.features}
+                  hotel_type={item.hotel_type}
                   style={{
-                    marginBottom: 15,
-                    marginLeft: 15,
+                    marginBottom: 10,
                   }}
-                  onPress={() => {
-                    navigation.navigate('CarDetail', {item});
-                  }}
+                  onPress={() => navigation.navigate('HotelDetail', {item})}
+                  onPressTag={() => navigation.navigate('Preview')}
                 />
               )}
             />
@@ -396,15 +368,30 @@ export default function Car({navigation}) {
             </Animated.View>
           </View>
         );
-        break;
     }
   };
+
+  useEffect(() => {
+    setLoad(true);
+    axios
+      .get(BASE_URL + 'thingsToDos')
+      .then((res) => {
+        // console.log(res.data.rows)
+        setLoad(false);
+        setActivities(res.data.rows);
+      })
+      .catch((err) => {
+        console.log(err);
+        //   setError(err.message);
+        setLoad(false);
+      });
+  }, []);
 
   return (
     <SafeAreaView style={BaseStyle.safeAreaView} forceInset={{top: 'always'}}>
       <Header
-        title={t('car')}
-        subTitle="24 Dec 2018, 2 Nights, 1 Room"
+        title={'Activities'}
+        subTitle=""
         renderLeft={() => {
           return (
             <Icon
@@ -422,10 +409,17 @@ export default function Car({navigation}) {
           navigation.goBack();
         }}
         onPressRight={() => {
-          navigation.navigate('SearchHistory');
+          // navigation.navigate('SearchHistory');
         }}
       />
-      {renderContent()}
+      {load ? (
+        <View
+          style={{flex: 1, alignIitems: 'center', justifyContent: 'center'}}>
+          <ActivityIndicator size={'large'} color={'#1281dd'} />
+        </View>
+      ) : (
+        renderContent()
+      )}
     </SafeAreaView>
   );
 }

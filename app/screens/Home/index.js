@@ -62,12 +62,12 @@ export default function Home({navigation}) {
     {
       icon: 'car-alt',
       name: 'Car',
-      route: 'OverViewCar',
+      route: 'Car',
     },
     {
       icon: 'forumbee',
       name: 'Activities',
-      route: 'More',
+      route: 'Activity',
     },
   ]);
   const [events, setEvents] = useState([]);

@@ -20,6 +20,7 @@ import Tour from '@screens/Tour';
 import Car from '@screens/Car';
 import OverViewCar from '@screens/OverViewCar';
 import Hotel from '@screens/Hotel';
+import Activity from '@screens/Activity';
 import Rental from '@screens/Rental';
 import Review from '@screens/Review';
 import Feedback from '@screens/Feedback';
@@ -157,6 +158,7 @@ export default function Main() {
         component={EventPreviewBooking}
       />
       <MainStack.Screen name="DashboardEvent" component={DashboardEvent} />
+      <MainStack.Screen name="Activity" component={Activity} />
       <MainStack.Screen name="EventTicket" component={EventTicket} />
       <MainStack.Screen name="PaymentMethod" component={PaymentMethod} />
       <MainStack.Screen name="MyPaymentMethod" component={MyPaymentMethod} />
