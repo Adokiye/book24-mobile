@@ -51,8 +51,8 @@ export default function Navigator() {
       fallbackLng: BaseSetting.defaultLanguage,
     });
   SplashScreen.hide();
-    StatusBar.setBackgroundColor(colors.primary, true);
-    StatusBar.setBarStyle(isDarkMode ? 'light-content' : 'dark-content', true);
+    // StatusBar.setBackgroundColor(colors.primary, true);
+    // StatusBar.setBarStyle(isDarkMode ? 'light-content' : 'dark-content', true);
   });
 
   const initialSetup = async()=>{

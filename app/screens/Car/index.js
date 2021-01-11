@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {FlatList, RefreshControl, View, Animated} from 'react-native';
 import {BaseStyle, useTheme} from '@config';
 import {useTranslation} from 'react-i18next';
@@ -6,6 +6,7 @@ import {Header, SafeAreaView, Icon, CarItem, FilterSort} from '@components';
 import styles from './styles';
 import * as Utils from '@utils';
 import {CarData} from '@data';
+import axios from 'axios';
 
 export default function Car({navigation}) {
   const {colors} = useTheme();
@@ -28,6 +29,14 @@ export default function Car({navigation}) {
   const [refreshing] = useState(false);
   const [modeView, setModeView] = useState('block');
   const [cars] = useState(CarData);
+
+  useEffect(()=>{
+  getData()
+  },[])
+
+  const getData = async() =>{
+
+  }
 
   /**
    * Called when onChange sort
@@ -117,17 +126,20 @@ export default function Car({navigation}) {
               renderItem={({item, index}) => (
                 <CarItem
                   block
-                  image={item.image}
-                  title={item.title}
+                  image={item.images != null && item.images.length>0?item.images[0].url:''}
+                  title={item.title||item.description}
                   name={item.name}
                   price={item.price}
                   per={item.per}
                   rate={item.rate}
                   numReviews={item.numReviews}
                   services={item.services}
-                  style={{marginBottom: 10}}
+                  style={{
+                    marginBottom: 15,
+                    marginLeft: 15,
+                  }}
                   onPress={() => {
-                    navigation.navigate('CarDetail');
+                    navigation.navigate('CarDetail',{item});
                   }}
                 />
               )}
@@ -185,8 +197,8 @@ export default function Car({navigation}) {
               renderItem={({item, index}) => (
                 <CarItem
                   grid
-                  image={item.image}
-                  title={item.title}
+                  image={item.images != null && item.images.length>0?item.images[0].url:''}
+                  title={item.title||item.description}
                   name={item.name}
                   price={item.price}
                   per={item.per}
@@ -198,7 +210,7 @@ export default function Car({navigation}) {
                     marginLeft: 15,
                   }}
                   onPress={() => {
-                    navigation.navigate('CarDetail');
+                    navigation.navigate('CarDetail',{item});
                   }}
                 />
               )}
@@ -254,8 +266,8 @@ export default function Car({navigation}) {
               renderItem={({item, index}) => (
                 <CarItem
                   list
-                  image={item.image}
-                  title={item.title}
+                  image={item.images != null && item.images.length>0?item.images[0].url:''}
+                  title={item.title||item.description}
                   name={item.name}
                   price={item.price}
                   per={item.per}
@@ -264,10 +276,10 @@ export default function Car({navigation}) {
                   services={item.services}
                   style={{
                     marginBottom: 15,
-                    paddingHorizontal: 20,
+                    marginLeft: 15,
                   }}
                   onPress={() => {
-                    navigation.navigate('CarDetail');
+                    navigation.navigate('CarDetail',{item});
                   }}
                 />
               )}
@@ -323,17 +335,20 @@ export default function Car({navigation}) {
               renderItem={({item, index}) => (
                 <CarItem
                   block
-                  image={item.image}
-                  title={item.title}
+                  image={item.images != null && item.images.length>0?item.images[0].url:''}
+                  title={item.title||item.description}
                   name={item.name}
                   price={item.price}
                   per={item.per}
                   rate={item.rate}
                   numReviews={item.numReviews}
                   services={item.services}
-                  style={{marginBottom: 10}}
+                  style={{
+                    marginBottom: 15,
+                    marginLeft: 15,
+                  }}
                   onPress={() => {
-                    navigation.navigate('CarDetail');
+                    navigation.navigate('CarDetail',{item});
                   }}
                 />
               )}

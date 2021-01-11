@@ -1,7 +1,14 @@
 import React, {useState, useEffect} from 'react';
 import {FlatList, RefreshControl, View, Animated} from 'react-native';
 import {BaseStyle, useTheme, BASE_URL} from '@config';
-import {Header, SafeAreaView, Icon, RentalItem, FilterSort, Loader} from '@components';
+import {
+  Header,
+  SafeAreaView,
+  Icon,
+  RentalItem,
+  FilterSort,
+  Loader,
+} from '@components';
 import styles from './styles';
 import * as Utils from '@utils';
 import {useTranslation} from 'react-i18next';
@@ -9,14 +16,13 @@ import {RentalData} from '@data';
 import axios from 'axios';
 import {PromotionData} from '@data';
 
-
 export default function Rental({navigation}) {
   const {colors} = useTheme();
   const {t} = useTranslation();
 
   const [modeView, setModeView] = useState('block');
   const [rentals, setRentals] = useState([]);
-  const [load, setLoad] = useState(false)
+  const [load, setLoad] = useState(false);
   const [refreshing] = useState(false);
   const scrollAnim = new Animated.Value(0);
   const offsetAnim = new Animated.Value(0);
@@ -33,6 +39,25 @@ export default function Rental({navigation}) {
     40,
   );
 
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = async () => {
+    setLoad(true);
+    await axios
+      .get(BASE_URL + 'rentals')
+      .then((res) => {
+        // console.log(res.data.rows)
+        setLoad(false);
+        setRentals(res.data.rows);
+      })
+      .catch((err) => {
+        console.log(err);
+        //   setError(err.message);
+        setLoad(false);
+      });
+  };
   const onChangeSort = () => {};
 
   /**
@@ -118,19 +143,19 @@ export default function Rental({navigation}) {
                 <RentalItem
                   block
                   image={item.images[0].url}
-                name={item.name}
-                location={item.address}
-                price={item.price}
-                //available={item.available}
-                rate={item.rate}
-                rateStatus={item.rateStatus}
-                numReviews={item.numReviews}
-                services={item.features}
-                rental_type={item.rental_type}
+                  name={item.name}
+                  location={item.address}
+                  price={item.price}
+                  //available={item.available}
+                  rate={item.rate}
+                  rateStatus={item.rateStatus}
+                  numReviews={item.numReviews}
+                  services={item.features}
+                  rental_type={item.rental_type}
                   style={{
                     paddingBottom: 10,
                   }}
-                  onPress={() => navigation.navigate('RentalDetail',{item})}
+                  onPress={() => navigation.navigate('RentalDetail', {item})}
                   onPressTag={() => navigation.navigate('Review')}
                 />
               )}
@@ -189,16 +214,16 @@ export default function Rental({navigation}) {
                 <RentalItem
                   grid
                   image={item.images[0].url}
-                name={item.name}
-                location={item.address}
-                price={item.price}
-                //available={item.available}
-                rate={item.rate}
-                rateStatus={item.rateStatus}
-                numReviews={item.numReviews}
-                services={item.features}
-                rental_type={item.rental_type}
-                  onPress={() => navigation.navigate('RentalDetail',{item})}
+                  name={item.name}
+                  location={item.address}
+                  price={item.price}
+                  //available={item.available}
+                  rate={item.rate}
+                  rateStatus={item.rateStatus}
+                  numReviews={item.numReviews}
+                  services={item.features}
+                  rental_type={item.rental_type}
+                  onPress={() => navigation.navigate('RentalDetail', {item})}
                   style={{
                     marginBottom: 15,
                     marginLeft: 15,
@@ -257,21 +282,21 @@ export default function Rental({navigation}) {
                 <RentalItem
                   list
                   image={item.images[0].url}
-                name={item.name}
-                location={item.address}
-                price={item.price}
-                //available={item.available}
-                rate={item.rate}
-                rateStatus={item.rateStatus}
-                numReviews={item.numReviews}
-                services={item.features}
-                rental_type={item.rental_type}
+                  name={item.name}
+                  location={item.address}
+                  price={item.price}
+                  //available={item.available}
+                  rate={item.rate}
+                  rateStatus={item.rateStatus}
+                  numReviews={item.numReviews}
+                  services={item.features}
+                  rental_type={item.rental_type}
                   style={{
                     marginHorizontal: 20,
                     marginBottom: 15,
                   }}
                   onPress={() => {
-                    navigation.navigate('RentalDetail',{item});
+                    navigation.navigate('RentalDetail', {item});
                   }}
                 />
               )}
@@ -327,19 +352,19 @@ export default function Rental({navigation}) {
                 <RentalItem
                   block
                   image={item.images[0].url}
-                name={item.name}
-                location={item.address}
-                price={item.price}
-                //available={item.available}
-                rate={item.rate}
-                rateStatus={item.rateStatus}
-                numReviews={item.numReviews}
-                services={item.features}
-                rental_type={item.rental_type}
+                  name={item.name}
+                  location={item.address}
+                  price={item.price}
+                  //available={item.available}
+                  rate={item.rate}
+                  rateStatus={item.rateStatus}
+                  numReviews={item.numReviews}
+                  services={item.features}
+                  rental_type={item.rental_type}
                   style={{
                     marginBottom: 10,
                   }}
-                  onPress={() => navigation.navigate('RentalDetail',{item})}
+                  onPress={() => navigation.navigate('RentalDetail', {item})}
                   onPressTag={() => navigation.navigate('Preview')}
                 />
               )}
@@ -360,21 +385,6 @@ export default function Rental({navigation}) {
         );
     }
   };
-
-  useEffect(() => {
-    setLoad(true)
-    axios.get(BASE_URL+'rentals')
-        .then(res => {
-          // console.log(res.data.rows)
-          setLoad(false)
-            setRentals(res.data.rows);
-        })
-        .catch(err => {
-          console.log(err)
-         //   setError(err.message);
-           setLoad(false)
-        })
-}, []);
 
   return (
     <SafeAreaView style={BaseStyle.safeAreaView} forceInset={{top: 'always'}}>

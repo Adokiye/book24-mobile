@@ -23,8 +23,10 @@ const CheckOut = ({route, navigation,order})=> {
   const [country, setCountry] = useState('');
   const [contactName, setContactName] = useState('');
   const [email, setEmail] = useState('');
+  const [error, setError] = useState('')
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isLoading,setIsLoading] = useState(false);
   const [cardNumber, setCardNumber] = useState('');
   const [valid, setvalid] = useState('');
   const [cvv, setCvv] = useState('');
