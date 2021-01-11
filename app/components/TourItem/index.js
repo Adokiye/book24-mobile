@@ -101,7 +101,8 @@ export default function TourItem(props) {
     return (
       <View style={[styles.listContent, style]}>
         <TouchableOpacity onPress={onPress} activeOpacity={0.9}>
-          <Image source={image} style={styles.listImage} />
+        <Image source={{uri:image}} style={styles.listImage} />
+
         </TouchableOpacity>
         <View style={styles.listContentRight}>
           <Text headline semibold>
@@ -214,7 +215,8 @@ export default function TourItem(props) {
     return (
       <View style={[styles.girdContent, style]}>
         <TouchableOpacity onPress={onPress} activeOpacity={0.9}>
-          <Image source={image} style={styles.girdImage} />
+        <Image source={{uri:image}} style={styles.girdImage} />
+
         </TouchableOpacity>
         <View style={styles.girdContentLocation}>
           <Icon name="map-marker-alt" color={colors.primary} size={10} />
@@ -236,11 +238,11 @@ export default function TourItem(props) {
           numberOfLines={1}>
           {name}
         </Text>
-        <View style={styles.girdContentRate}>
+        {/* <View style={styles.girdContentRate}>
           <Text caption1 accentColor>
             {travelTime}
           </Text>
-        </View>
+        </View> */}
         <Text
           title3
           primaryColor

@@ -198,7 +198,7 @@ function BottomTabNavigator() {
         name="Home"
         component={Home}
         options={{
-          title: t('home'),
+          title: 'HOME',
           tabBarIcon: ({color}) => {
             return <Icon color={color} name="home" size={20} solid />;
           },
@@ -208,7 +208,7 @@ function BottomTabNavigator() {
         name="Booking"
         component={login ?Booking:Walkthrough}
         options={{
-          title: t('booking'),
+          title: 'BOOKING',
           tabBarIcon: ({color}) => {
             return <Icon color={color} name="bookmark" size={20} solid />;
           },
@@ -218,7 +218,7 @@ function BottomTabNavigator() {
         name="More"
         component={More}
         options={{
-          title: 'More',
+          title: 'MORE',
           tabBarIcon: ({color}) => {
             return <Icon solid color={color} name="bars" size={20} solid />;
           },
@@ -238,7 +238,7 @@ function BottomTabNavigator() {
         name="Profile"
         component={login ? Profile : Walkthrough}
         options={{
-          title: t('account'),
+          title: 'ACCOUNT',
           tabBarIcon: ({color}) => {
             return <Icon solid color={color} name="user-circle" size={20} />;
           },

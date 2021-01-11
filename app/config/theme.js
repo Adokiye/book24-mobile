@@ -17,6 +17,7 @@ export const BaseColor = {
   pinkColor: '#A569BD',
   greenColor: '#58D68D',
   yellowColor: '#FDC60A',
+  logoGreenColor: '#00A651'
 };
 
 /**
@@ -36,6 +37,8 @@ export const ThemeSupport = [
         card: '#F5F5F5',
         text: '#212121',
         border: '#c7c7cc',
+  logoGreenColor: '#00A651'
+
       },
     },
     dark: {
@@ -49,6 +52,8 @@ export const ThemeSupport = [
         card: '#121212',
         text: '#e5e5e7',
         border: '#272729',
+  logoGreenColor: '#00A651'
+
       },
     },
   },

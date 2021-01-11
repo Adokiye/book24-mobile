@@ -1,12 +1,14 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   TouchableOpacity,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Animated,
+  RefreshControl,
 } from 'react-native';
-import {BaseStyle, BaseColor, useTheme} from '@config';
+import {BaseStyle, BaseColor, useTheme, BASE_URL} from '@config';
 import {
   Header,
   SafeAreaView,
@@ -15,10 +17,13 @@ import {
   Button,
   BookingTime,
   TextInput,
+  FilterSort,
+  HotelItem,
 } from '@components';
 import Modal from 'react-native-modal';
 import styles from './styles';
 import {useTranslation} from 'react-i18next';
+import axios from 'axios';
 
 export default function Search({navigation}) {
   const {colors} = useTheme();
@@ -34,6 +39,140 @@ export default function Search({navigation}) {
   const [night, setNight] = useState(1);
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [hotels, setHotels] = useState([]);
+  const [searchedHotels, setSearchedHotels] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [searchedEvents, setSearchedEvents] = useState([]);
+  const [tours, setTours] = useState([]);
+  const [searchedTours, setSearchedTours] = useState([]);
+  const [cruise, setCruise] = useState([]);
+  const [searchedCruise, setSearchedCruise] = useState([]);
+  const [activities, setActivities] = useState([]);
+  const [searchedActivities, setSearchedActivities] = useState([]);
+  const [cars, setCars] = useState([]);
+  const [searchedCars, setSearchedCars] = useState([]);
+  const [rentals, setRentals] = useState([]);
+  const [searchedRentals, setSearchedRentals] = useState([]);
+  const scrollAnim = new Animated.Value(0);
+  const offsetAnim = new Animated.Value(0);
+  const clampedScroll = Animated.diffClamp(
+    Animated.add(
+      scrollAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
+        extrapolateLeft: 'clamp',
+      }),
+      offsetAnim,
+    ),
+    0,
+    40,
+  );
+  const navbarTranslate = clampedScroll.interpolate({
+    inputRange: [0, 40],
+    outputRange: [0, -40],
+    extrapolate: 'clamp',
+  });
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = async () => {
+    await axios
+      .get(BASE_URL + 'hotels')
+      .then(async (res) => {
+        // console.log(res.data.rows)
+        setHotels(res.data.rows);
+        await axios
+          .get(BASE_URL + 'events')
+          .then(async (res) => {
+            // console.log(res.data.rows)
+            setEvents(res.data.rows);
+            await axios
+              .get(BASE_URL + 'tours')
+              .then(async (res) => {
+                // console.log(res.data.rows)
+                setTours(res.data.rows);
+                await axios
+                  .get(BASE_URL + 'cruise')
+                  .then(async (res) => {
+                    // console.log(res.data.rows)
+                    setCruise(res.data.rows);
+                    await axios
+                      .get(BASE_URL + 'thingsToDos')
+                      .then(async (res) => {
+                        // console.log(res.data.rows)
+                        setActivities(res.data.rows);
+                        await axios
+                          .get(BASE_URL + 'cars')
+                          .then(async (res) => {
+                            // console.log(res.data.rows)
+                            setCars(res.data.rows);
+                            //   setLoad(true);
+                            await axios
+                              .get(BASE_URL + 'rentals')
+                              .then(async (res) => {
+                                console.log(res.data.rows);
+                                setRentals(res.data.rows);
+                                //   setLoad(true);
+                              })
+                              .catch((err) => {
+                                console.log(err);
+                                //   setError(err.message);
+                                //    setLoad(true)
+                              });
+                          })
+                          .catch((err) => {
+                            console.log(err);
+                            //   setError(err.message);
+                            //    setLoad(true)
+                          });
+                        //   setLoad(true);
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                        //   setError(err.message);
+                        //    setLoad(true)
+                      });
+                    //   setLoad(true);
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                    //   setError(err.message);
+                    //    setLoad(true)
+                  });
+                //   setLoad(true);
+              })
+              .catch((err) => {
+                console.log(err);
+                //   setError(err.message);
+                //    setLoad(true)
+              });
+            //   setLoad(true);
+          })
+          .catch((err) => {
+            console.log(err);
+            //   setError(err.message);
+            //    setLoad(true)
+          });
+        //   setLoad(true);
+      })
+      .catch((err) => {
+        console.log(err);
+        //   setError(err.message);
+        //    setLoad(true)
+      });
+  };
+
+  const filterByValue = (array, string) => {
+    if (string != '') {
+      return array.filter((o) =>
+        o['name'].toLowerCase().includes(string.toLowerCase()),
+      );
+    } else {
+      return [];
+    }
+  };
 
   /**
    * call when action modal
@@ -210,7 +349,7 @@ export default function Search({navigation}) {
     <SafeAreaView style={BaseStyle.safeAreaView} forceInset={{top: 'always'}}>
       {renderModal()}
       <Header
-        title={t('search')}
+        title={'Search'}
         renderLeft={() => {
           return <Icon name="times" size={20} color={colors.primary} />;
         }}
@@ -224,35 +363,361 @@ export default function Search({navigation}) {
         style={{flex: 1}}>
         <ScrollView contentContainerStyle={{padding: 20}}>
           <TextInput
-            onChangeText={(text) => setKeyword(text)}
-            placeholder={t('what_are_you_looking_for')}
+            onChangeText={(text) => {
+              setKeyword(text);
+              setSearchedHotels(filterByValue(hotels, text));
+              setSearchedEvents(filterByValue(events, text));
+              setSearchedTours(filterByValue(tours, text));
+              setSearchedActivities(filterByValue(activities, text));
+              setSearchedCars(filterByValue(cars, text));
+              setSearchedCruise(filterByValue(cruise, text));
+              setSearchedRentals(filterByValue(rentals, text));
+            }}
+            placeholder={t('What are you looking for')}
             value={keyword}
           />
-          <BookingTime style={{marginTop: 15}} />
-          <View style={styles.contentQuest}>
-            <TouchableOpacity
-              style={[styles.total, {backgroundColor: colors.card}]}
-              onPress={() => openModal('quest')}>
-              <Text caption1 grayColor style={{marginBottom: 5}}>
-                {t('total_guest')}
-              </Text>
-              <Text body1 semibold numberOfLines={1}>
-                2 {t('adults')}, 1 {t('children')}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.duration, {backgroundColor: colors.card}]}
-              onPress={() => openModal('duration')}>
-              <Text caption1 grayColor style={{marginBottom: 5}}>
-                {t('duration')}
-              </Text>
-              <Text body1 semibold>
-                1 {t('night')}
-              </Text>
-            </TouchableOpacity>
+          <View style={{flex: 1}}>
+            <Animated.FlatList
+              contentContainerStyle={{
+                paddingTop: 50,
+              }}
+              columnWrapperStyle={{
+                paddingLeft: 5,
+                paddingRight: 20,
+              }}
+              scrollEventThrottle={1}
+              onScroll={Animated.event(
+                [
+                  {
+                    nativeEvent: {
+                      contentOffset: {
+                        y: scrollAnim,
+                      },
+                    },
+                  },
+                ],
+                {useNativeDriver: true},
+              )}
+              numColumns={2}
+              data={searchedHotels}
+              key={'grid'}
+              keyExtractor={(item, index) => item.id}
+              renderItem={({item, index}) => (
+                <HotelItem
+                  grid
+                  image={item.images[0].url}
+                  name={item.name}
+                  location={item.address}
+                  price={'\u20a6' + parseInt(item.rooms[0].price)}
+                  //available={item.available}
+                  rate={item.rate}
+                  rateStatus={item.rateStatus}
+                  numReviews={item.numReviews}
+                  services={item.features}
+                  hotel_type={item.hotel_type}
+                  onPress={() => navigation.navigate('HotelDetail', {item})}
+                  style={{
+                    marginBottom: 15,
+                    marginLeft: 15,
+                  }}
+                />
+              )}
+            />
+            <Animated.FlatList
+              contentContainerStyle={{
+                paddingTop: 10,
+              }}
+              columnWrapperStyle={{
+                paddingLeft: 5,
+                paddingRight: 20,
+              }}
+              scrollEventThrottle={1}
+              onScroll={Animated.event(
+                [
+                  {
+                    nativeEvent: {
+                      contentOffset: {
+                        y: scrollAnim,
+                      },
+                    },
+                  },
+                ],
+                {useNativeDriver: true},
+              )}
+              numColumns={2}
+              data={searchedEvents}
+              //key={'grid'}
+              keyExtractor={(item, index) => item.id}
+              renderItem={({item, index}) => (
+                <HotelItem
+                  grid
+                  image={item.images[0].url}
+                  name={item.name}
+                  location={item.address || ''}
+                  price={
+                    item.ticket_type.length > 0
+                      ? '\u20a6' + parseInt(item.ticket_type[0].price)
+                      : null
+                  }
+                  //available={item.available}
+                  rate={item.rate}
+                  rateStatus={item.rateStatus}
+                  numReviews={item.numReviews}
+                  services={item.features}
+                  hotel_type={item.hotel_type}
+                  onPress={() => navigation.navigate('EventDetail', {item})}
+                  style={{
+                    marginBottom: 15,
+                    marginLeft: 15,
+                  }}
+                />
+              )}
+            />
+            <Animated.FlatList
+              contentContainerStyle={{
+                paddingTop: 10,
+              }}
+              columnWrapperStyle={{
+                paddingLeft: 5,
+                paddingRight: 20,
+              }}
+              scrollEventThrottle={1}
+              onScroll={Animated.event(
+                [
+                  {
+                    nativeEvent: {
+                      contentOffset: {
+                        y: scrollAnim,
+                      },
+                    },
+                  },
+                ],
+                {useNativeDriver: true},
+              )}
+              numColumns={2}
+              data={searchedTours}
+              //key={'grid'}
+              keyExtractor={(item, index) => item.id}
+              renderItem={({item, index}) => (
+                <HotelItem
+                  grid
+                  image={item.images[0].url}
+                  name={item.name}
+                  location={item.address || ''}
+                  price={
+                    item.tour_packages.length > 0
+                      ? '\u20a6' + parseInt(item.tour_packages[0].price)
+                      : null
+                  }
+                  //available={item.available}
+                  rate={item.rate}
+                  rateStatus={item.rateStatus}
+                  numReviews={item.numReviews}
+                  services={item.features}
+                  hotel_type={item.hotel_type}
+                  onPress={() => navigation.navigate('TourDetail', {item})}
+                  style={{
+                    marginBottom: 15,
+                    marginLeft: 15,
+                  }}
+                />
+              )}
+            />
+             <Animated.FlatList
+              contentContainerStyle={{
+                paddingTop: 10,
+              }}
+              columnWrapperStyle={{
+                paddingLeft: 5,
+                paddingRight: 20,
+              }}
+              scrollEventThrottle={1}
+              onScroll={Animated.event(
+                [
+                  {
+                    nativeEvent: {
+                      contentOffset: {
+                        y: scrollAnim,
+                      },
+                    },
+                  },
+                ],
+                {useNativeDriver: true},
+              )}
+              numColumns={2}
+              data={searchedActivities}
+              //key={'grid'}
+              keyExtractor={(item, index) => item.id}
+              renderItem={({item, index}) => (
+                <HotelItem
+                  grid
+                  image={item.images.length>0?item.images[0].url:''}
+                  name={item.name}
+                  location={item.address || ''}
+                  price={
+                    null
+                  }
+                  //available={item.available}
+                  rate={item.rate}
+                  rateStatus={item.rateStatus}
+                  numReviews={item.numReviews}
+                  services={item.features}
+                  hotel_type={item.hotel_type}
+                  onPress={() => navigation.navigate('TourDetail', {item})}
+                  style={{
+                    marginBottom: 15,
+                    marginLeft: 15,
+                  }}
+                />
+              )}
+            />
           </View>
+          <Animated.FlatList
+              contentContainerStyle={{
+                paddingTop: 10,
+              }}
+              columnWrapperStyle={{
+                paddingLeft: 5,
+                paddingRight: 20,
+              }}
+              scrollEventThrottle={1}
+              onScroll={Animated.event(
+                [
+                  {
+                    nativeEvent: {
+                      contentOffset: {
+                        y: scrollAnim,
+                      },
+                    },
+                  },
+                ],
+                {useNativeDriver: true},
+              )}
+              numColumns={2}
+              data={searchedRentals}
+              //key={'grid'}
+              keyExtractor={(item, index) => item.id}
+              renderItem={({item, index}) => (
+                <HotelItem
+                  grid
+                  image={item.images[0].url}
+                  name={item.name}
+                  location={item.address || ''}
+                  price={
+                    '\u20a6' +parseInt(item.price)||null
+                  }
+                  //available={item.available}
+                  rate={item.rate}
+                  rateStatus={item.rateStatus}
+                  numReviews={item.numReviews}
+                  services={item.features}
+                  hotel_type={item.hotel_type}
+                  onPress={() => navigation.navigate('RentalDetail', {item})}
+                  style={{
+                    marginBottom: 15,
+                    marginLeft: 15,
+                  }}
+                />
+              )}
+            />
+             <Animated.FlatList
+              contentContainerStyle={{
+                paddingTop: 10,
+              }}
+              columnWrapperStyle={{
+                paddingLeft: 5,
+                paddingRight: 20,
+              }}
+              scrollEventThrottle={1}
+              onScroll={Animated.event(
+                [
+                  {
+                    nativeEvent: {
+                      contentOffset: {
+                        y: scrollAnim,
+                      },
+                    },
+                  },
+                ],
+                {useNativeDriver: true},
+              )}
+              numColumns={2}
+              data={searchedCars}
+              //key={'grid'}
+              keyExtractor={(item, index) => item.id}
+              renderItem={({item, index}) => (
+                <HotelItem
+                  grid
+                  image={item.images!= null && item.images.length >0?item.images[0].url:''}
+                  name={item.name}
+                  location={item.address || ''}
+                  price={
+                    '\u20a6' +parseInt(item.price)||null
+                  }
+                  //available={item.available}
+                  rate={item.rate}
+                  rateStatus={item.rateStatus}
+                  numReviews={item.numReviews}
+                  services={item.features}
+                  hotel_type={item.hotel_type}
+                  onPress={() => navigation.navigate('CarDetail', {item})}
+                  style={{
+                    marginBottom: 15,
+                    marginLeft: 15,
+                  }}
+                />
+              )}
+            />
+             <Animated.FlatList
+              contentContainerStyle={{
+                paddingTop: 10,
+              }}
+              columnWrapperStyle={{
+                paddingLeft: 5,
+                paddingRight: 20,
+              }}
+              scrollEventThrottle={1}
+              onScroll={Animated.event(
+                [
+                  {
+                    nativeEvent: {
+                      contentOffset: {
+                        y: scrollAnim,
+                      },
+                    },
+                  },
+                ],
+                {useNativeDriver: true},
+              )}
+              numColumns={2}
+              data={searchedCruise}
+              //key={'grid'}
+              keyExtractor={(item, index) => item.id}
+              renderItem={({item, index}) => (
+                <HotelItem
+                  grid
+                  image={item.images[0].url}
+                  name={item.name}
+                  location={item.address || ''}
+                  price={
+                    '\u20a6' +parseInt(item.price)||null
+                  }
+                  //available={item.available}
+                  rate={item.rate}
+                  rateStatus={item.rateStatus}
+                  numReviews={item.numReviews}
+                  services={item.features}
+                  hotel_type={item.hotel_type}
+                  onPress={() => navigation.navigate('CruiseDetail', {item})}
+                  style={{
+                    marginBottom: 15,
+                    marginLeft: 15,
+                  }}
+                />
+              )}
+            />
         </ScrollView>
-        <View style={{paddingHorizontal: 20, paddingVertical: 15}}>
+        {/* <View style={{paddingHorizontal: 20, paddingVertical: 15}}>
           <Button
             full
             onPress={() => {
@@ -265,7 +730,7 @@ export default function Search({navigation}) {
             loading={loading}>
             {t('apply')}
           </Button>
-        </View>
+        </View> */}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
