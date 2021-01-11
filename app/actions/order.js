@@ -8,6 +8,7 @@ import {
   ORDER_NAME,
   ORDER_SUB_DATA,
   ORDER_SUB_NAME,
+  ORDER_TYPE,
 } from "./actionTypes";
 
 export const setOrderData = (payload) => {
@@ -22,6 +23,14 @@ export const setOrderImage = (payload) => {
   console.log(payload);
   return {
     type: ORDER_IMAGE,
+    payload,
+  };
+};
+
+export const setOrderType = (payload) => {
+  console.log(payload);
+  return {
+    type: ORDER_TYPE,
     payload,
   };
 };

@@ -1,251 +1,466 @@
-import React, {useState} from 'react';
-import {View, ScrollView} from 'react-native';
-import {BaseStyle, BaseColor, Images, useTheme} from '@config';
-import Modal from 'react-native-modal';
-import Swiper from 'react-native-swiper';
+import React, {useState, useEffect} from 'react';
 import {
-  Image,
+  View,
+  ScrollView,
+  FlatList,
+  Animated,
+  TouchableOpacity,
+} from 'react-native';
+import {BaseColor, Images, useTheme} from '@config';
+import {
   Header,
   SafeAreaView,
   Icon,
   Text,
-  ProfileDetail,
-  ProfilePerformance,
-  Tag,
-  HelpBlock,
   StarRating,
+  PostListItem,
+  HelpBlock,
+  Button,
+  RoomType,
+  HotelItem,
+  EventCard,
 } from '@components';
-import {useTranslation} from 'react-i18next';
+import * as Utils from '@utils';
+import {InteractionManager} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
+import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
+import {connect, useDispatch} from 'react-redux';
+import {
+  setOrderUrl,
+  setOrderData,
+  setOrderPrice,
+  setOrderCheckInDate,
+  setOrderCheckOutDate,
+  setOrderImage,
+  setOrderName,
+  setOrderSubData,
+  setOrderSubName,
+  setOrderType,
+} from '../../actions/order';
 import styles from './styles';
-import {UserData, HelpBlockData} from '@data';
+import {HelpBlockData} from '@data';
+import {useTranslation} from 'react-i18next';
+import moment from 'moment';
 
-export default function CarDetail({navigation,route}) {
-  const {item} = route.params
+export default function CarDetail({navigation, route}) {
+  const dispatch = useDispatch();
+  const {item, cars} = route.params;
   const {colors} = useTheme();
   const {t} = useTranslation();
+  console.log('----');
+  console.log(item);
+  console.log('----');
+  const {features, bio} = item;
+  const carData = item;
 
-  const [modalVisible, setModalVisible] = useState(false);
-  const [slide] = useState([
-    {image: Images.car1},
-    {image: Images.car2},
-    {image: Images.car3},
-    {image: Images.car4},
-  ]);
-  const [services] = useState([
-    {icon: 'user', name: '5 seats'},
-    {icon: 'history', name: 'Pay at Pick-Up  '},
-    {icon: 'snowflake', name: 'AC'},
-    {icon: 'paw', name: 'Pet Allowed'},
-    {icon: 'wifi', name: 'Free Wifi'},
-  ]);
-  const [userData] = useState(UserData[0]);
+  const [heightHeader, setHeightHeader] = useState(Utils.heightHeader());
+  const [renderMapView, setRenderMapView] = useState(false);
+  const [region] = useState({
+    latitude: 1.9344,
+    longitude: 103.358727,
+    latitudeDelta: 0.05,
+    longitudeDelta: 0.004,
+  });
   const [helpBlock] = useState(HelpBlockData);
+  const deltaY = new Animated.Value(0);
 
-  // Show bottom modal when user press for booking
-  const openModalBottom = () => {
-    setModalVisible(true);
+  useEffect(() => {
+    InteractionManager.runAfterInteractions(() => {
+      setRenderMapView(true);
+    });
+  }, []);
+
+  const book = async () => {
+    const new_data = {
+      car_id: item.id,
+      price: parseInt(item.ticket_type[0].price),
+    };
+    dispatch(setOrderData(new_data));
+    dispatch(setOrderUrl('carBooking'));
+    dispatch(setOrderPrice(parseInt(item.price)));
+    dispatch(setOrderType('car'));
+
+    dispatch(
+      setOrderImage(
+        carData.images && carData.images[0] && carData.images[0].url,
+      ),
+    );
+    // this.props.setOrderCheckInDate(moment(book_in_date).format('MMMM DDDD YYYY HH:mm:ss'))
+    // this.props.setOrderCheckOutDate(moment(book_out_date).format('MMMM DDDD YYYY HH:mm:ss'))
+    dispatch(setOrderName(carData.name));
+    // this.props.setOrderSubData(
+    //   {
+    //     'No of adults':no_of_adults,
+    //     'No of children': no_of_children,
+    //   }
+    // )
+    //dispatch(setOrderSubName(item.name));
+    return navigation.navigate('PreviewBooking');
   };
 
-  // Render container bottom
-  const renderModalBottom = () => {
-    return (
-      <Modal
-        isVisible={modalVisible}
-        onSwipeComplete={() => setModalVisible(false)}
-        swipeDirection={['down']}
-        style={styles.bottomModal}>
-        <View
-          style={[styles.contentFilterBottom, {backgroundColor: colors.card}]}>
-          <View style={styles.contentSwipeDown}>
-            <View style={styles.lineSwipeDown} />
-          </View>
-          <View style={styles.contentModel}>
-            <View style={{alignItems: 'flex-start'}}>
-              <Text title3>{t('economy')}</Text>
-              <Text subhead grayColor>
-                Ford Mustang
+  const heightImageBanner = Utils.scaleWithPixel(250, 1);
+  const marginTopBanner = heightImageBanner - heightHeader - 40;
+
+  const average_price = item.price
+  console.log(item.images[0].url);
+  return (
+    <View style={{flex: 1}}>
+      <Animated.Image
+        source={{uri: item.images[0].url}}
+        style={[
+          styles.imgBanner,
+          {
+            height: deltaY.interpolate({
+              inputRange: [
+                0,
+                Utils.scaleWithPixel(200),
+                Utils.scaleWithPixel(200),
+              ],
+              outputRange: [heightImageBanner, heightHeader, heightHeader],
+            }),
+          },
+        ]}
+      />
+      <SafeAreaView style={{flex: 1}} forceInset={{top: 'always'}}>
+        {/* Header */}
+        <Header
+          title=""
+          renderLeft={() => {
+            return (
+              <Icon
+                name="arrow-left"
+                size={20}
+                color={BaseColor.whiteColor}
+                enableRTL={true}
+              />
+            );
+          }}
+          renderRight={() => {
+            return (
+              <Icon name="images" size={20} color={BaseColor.whiteColor} />
+            );
+          }}
+          onPressLeft={() => {
+            navigation.goBack();
+          }}
+          onPressRight={() => {
+            navigation.navigate('PreviewImage', {item});
+          }}
+        />
+        <ScrollView
+          onScroll={Animated.car([
+            {
+              nativeEvent: {
+                contentOffset: {y: deltaY},
+              },
+            },
+          ])}
+          onContentSizeChange={() => setHeightHeader(Utils.heightHeader())}
+          scrollEventThrottle={8}>
+          {/* Main Container */}
+          <View style={{paddingHorizontal: 20}}>
+            {/* Information */}
+            <View
+              style={[
+                styles.contentBoxTop,
+                {
+                  marginTop: marginTopBanner,
+                  backgroundColor: colors.card,
+                  shadowColor: colors.border,
+                  borderColor: colors.border,
+                },
+              ]}>
+              <Text title2 semibold style={{marginBottom: 5}}>
+                {item.name}
               </Text>
-              <Text title3 primaryColor semibold style={{marginTop: 5}}>
-                $399,99
+              <StarRating
+                disabled={true}
+                starSize={14}
+                maxStars={5}
+                rating={4.5}
+                selectedStar={(rating) => {}}
+                fullStarColor={BaseColor.yellowColor}
+              />
+              <Text
+                body2
+                numberOfLines={3}
+                style={{
+                  marginTop: 5,
+                  textAlign: 'center',
+                }}>
+                {item.description}
               </Text>
+            </View>
+            {/* Rating Review */}
+            <View
+              style={[styles.blockView, {borderBottomColor: colors.border}]}>
               <View
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
-                  marginTop: 5,
                 }}>
-                <StarRating
-                  disabled={true}
-                  starSize={10}
-                  maxStars={5}
-                  rating={4}
-                  selectedStar={rating => {}}
-                  fullStarColor={BaseColor.yellowColor}
-                />
-
-                <Text
-                  caption1
-                  grayColor
-                  semibold
-                  style={{
-                    marginLeft: 3,
-                  }}>
-                  100 {t('reviews')}
-                </Text>
-              </View>
-            </View>
-            <Tag
-              primary
-              onPress={() => {
-                setModalVisible(false);
-                navigation.navigate('PreviewBooking');
-              }}>
-              {t('book_now')}
-            </Tag>
-          </View>
-        </View>
-      </Modal>
-    );
-  };
-
-  return (
-    <SafeAreaView style={BaseStyle.safeAreaView} forceInset={{top: 'always'}}>
-      <Header
-        title={t('Car Detail')}
-        subTitle=""
-        renderLeft={() => {
-          return (
-            <Icon
-              name="arrow-left"
-              size={20}
-              color={colors.primary}
-              enableRTL={true}
-            />
-          );
-        }}
-        onPressLeft={() => {
-          navigation.goBack();
-        }}
-        renderRight={() => {
-          return (
-            <Text headline primaryColor numberOfLines={1}>
-              {t('Book')}
-            </Text>
-          );
-        }}
-        onPressRight={() => {
-          openModalBottom();
-        }}
-      />
-      {renderModalBottom()}
-      <ScrollView>
-        <View style={styles.wrapper}>
-          {/* <Swiper
-            dotStyle={{
-              backgroundColor: BaseColor.dividerColor,
-            }}
-            activeDotColor={colors.primary}
-            paginationStyle={styles.contentPage}
-            removeClippedSubviews={false}>
-            {item.images && JSON.parse(item.images).length>0&&JSON.parse(item.images).map((item, index) => {
-              return (
-                <Image
-                  source={{uri:item.url}}
-                  style={styles.img}
-                  resizeMode="contain"
-                  key={index}
-                />
-              );
-            })}
-          </Swiper> */}
-        </View>
-        <View
-          style={{
-            paddingHorizontal: 20,
-            marginTop: 20,
-            alignItems: 'flex-start',
-          }}>
-          <Text headline semibold>
-            {t('Description')}
-          </Text>
-          <Text body2 style={{marginTop: 5}}>
-            {item.description}
-          </Text>
-          {/* <Text headline semibold style={{marginTop: 20}}>
-            {t('features')}
-          </Text>
-          <View style={styles.listContentService}>
-            {services.map((item, index) => {
-              return (
                 <View
-                  style={{
-                    alignItems: 'center',
-                    flex: 1,
-                  }}
-                  key={index}>
-                  <Icon
-                    name={item.icon}
-                    color={colors.accent}
-                    size={16}
-                    solid
-                  />
-                  <Text
-                    overline
-                    grayColor
-                    numberOfLines={1}
-                    style={{marginTop: 5}}>
-                    {item.name}
+                  style={[
+                    styles.circlePoint,
+                    {backgroundColor: colors.primary},
+                  ]}>
+                  <Text title3 whiteColor>
+                    9.5
                   </Text>
                 </View>
-              );
-            })}
-            <Icon
-              name={'angle-right'}
-              color={BaseColor.grayColor}
-              size={16}
-              solid
-              enableRTL={true}
-            />
-          </View> */}
+                <View>
+                  <Text title3 primaryColor style={{marginBottom: 3}}>
+                    {t('excellent')}
+                  </Text>
+                  <Text body2>See 801 reviews</Text>
+                </View>
+              </View>
+              <View style={styles.contentRateDetail}>
+                <View style={[styles.contentLineRate, {marginRight: 10}]}>
+                  <View style={{flex: 1}}>
+                    <Text caption2 grayColor style={{marginBottom: 5}}>
+                      Interior Design
+                    </Text>
+                    <View style={styles.lineBaseRate} />
+                    <View
+                      style={[
+                        styles.linePercent,
+                        {backgroundColor: colors.accent},
+                        {width: '40%'},
+                      ]}
+                    />
+                  </View>
+                  <Text caption2 style={{marginLeft: 15}}>
+                    4
+                  </Text>
+                </View>
+                <View style={styles.contentLineRate}>
+                  <View style={{flex: 1}}>
+                    <Text caption2 grayColor style={{marginBottom: 5}}>
+                      Server Quality
+                    </Text>
+                    <View style={styles.lineBaseRate} />
+                    <View
+                      style={[
+                        styles.linePercent,
+                        {backgroundColor: colors.accent},
+                        {width: '70%'},
+                      ]}
+                    />
+                  </View>
+                  <Text caption2 style={{marginLeft: 15}}>
+                    7
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.contentRateDetail}>
+                <View style={[styles.contentLineRate, {marginRight: 10}]}>
+                  <View style={{flex: 1}}>
+                    <Text caption2 grayColor style={{marginBottom: 5}}>
+                      Interio Design
+                    </Text>
+                    <View style={styles.lineBaseRate} />
+                    <View
+                      style={[
+                        styles.linePercent,
+                        {backgroundColor: colors.accent},
+                        {width: '50%'},
+                      ]}
+                    />
+                  </View>
+                  <Text caption2 style={{marginLeft: 15}}>
+                    5
+                  </Text>
+                </View>
+                <View style={styles.contentLineRate}>
+                  <View style={{flex: 1}}>
+                    <Text caption2 grayColor style={{marginBottom: 5}}>
+                      Server Quality
+                    </Text>
+                    <View style={styles.lineBaseRate} />
+                    <View
+                      style={[
+                        styles.linePercent,
+                        {backgroundColor: colors.accent},
+                        {width: '60%'},
+                      ]}
+                    />
+                  </View>
+                  <Text caption2 style={{marginLeft: 15}}>
+                    6
+                  </Text>
+                </View>
+              </View>
+            </View>
+            {/* Description */}
+            <View
+              style={[styles.blockView, {borderBottomColor: colors.border}]}>
+              <Text headline semibold>
+                {item.description}
+              </Text>
+              <Text body2 style={{marginTop: 5}}>
+                {item.address}
+              </Text>
+            </View>
+            {/* Map location */}
+            <View
+              style={[styles.blockView, {borderBottomColor: colors.border}]}>
+              <Text headline style={{marginBottom: 5}} semibold>
+                {item.location.substring(0, 1).toUpperCase() +
+                  item.location.substring(1, item.location.length)}
+              </Text>
+              <Text body2 numberOfLines={2}>
+                {item.address}
+              </Text>
+              {/* <View
+                style={{
+                  height: 180,
+                  width: '100%',
+                  marginTop: 10,
+                }}>
+                {renderMapView && (
+                  <MapView
+                    provider={PROVIDER_GOOGLE}
+                    style={styles.map}
+                    region={region}
+                    onRegionChange={() => {}}>
+                    <Marker
+                      coordinate={{
+                        latitude: 1.9344,
+                        longitude: 103.358727,
+                      }}
+                    />
+                  </MapView>
+                )}
+              </View> */}
+            </View>
+            {/* Open Time */}
+            <View
+              style={[styles.blockView, {borderBottomColor: colors.border}]}>
+              <Text headline semibold>
+                {t('good_to_know')}
+              </Text>
+              {/* <View
+                style={{
+                  flexDirection: 'row',
+                  marginTop: 5,
+                }}>
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                  }}>
+                  <Text body2 grayColor>
+                    {'Start Date'}
+                  </Text>
+                  <Text body2 accentColor semibold>
+                    {moment(item.start_date).format('DD MMM Do YYYY')}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                  }}>
+                  <Text body2 grayColor>
+                    {'End Date'}
+                  </Text>
+                  <Text body2 accentColor semibold>
+                    {moment(item.end_date).format('DD MMM Do YYYY')}
+                  </Text>
+                </View>
+              </View> */}
+            </View>
+            {/* Activities */}
+            <View
+              style={[styles.blockView, {borderBottomColor: colors.border}]}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginBottom: 10,
+                  alignItems: 'flex-end',
+                }}>
+                <Text headline semibold>
+                  {'You might also like'}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('Car');
+                  }}>
+                  <Text caption1 grayColor>
+                    {t('show_more')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <FlatList
+                contentContainerStyle={{paddingLeft: 5, paddingRight: 20}}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                data={cars}
+                keyExtractor={(item, index) => item.id}
+                renderItem={({item, index}) => {
+                  if (index < 4) {
+                    return (
+                      <HotelItem
+                        grid={true}
+                        image={item.images[0].url}
+                        name={item.name}
+                        location={
+                          item.location.substring(0, 1).toUpperCase() +
+                          item.location.substring(1, item.location.length) +
+                          ',Nigeria'
+                        }
+                        price={''}
+                        available={item.available}
+                        rate={item.rate}
+                        rateStatus={item.rateStatus}
+                        numReviews={item.numReviews}
+                        services={item.features}
+                        style={{marginLeft: 15, width: 150, marginBottom: 15}}
+                        onPress={() =>
+                          navigation.navigate('CarDetail', {item})
+                        }
+                      />
+                    );
+                  }
+                }}
+              />
+            </View>
+            {/* Help Block Information */}
+            <View
+              style={[styles.blockView, {borderBottomColor: colors.border}]}>
+              <HelpBlock
+                title={helpBlock.title}
+                description={helpBlock.description}
+                phone={item.contact_phone || item.contact_website}
+                email={item.contact_email}
+                style={{margin: 20}}
+                onPress={() => {
+                  navigation.navigate('ContactUs');
+                }}
+              />
+            </View>
+          </View>
+        </ScrollView>
+        {/* Pricing & Booking Process */}
+        <View
+          style={[styles.contentButtonBottom, {borderTopColor: colors.border}]}>
+          <View>
+            <Text caption1 semibold>
+              {t('price')}
+            </Text>
+            <Text title3 primaryColor semibold>
+              {'\u20a6'}
+              {average_price}
+            </Text>
+            <Text caption1 semibold style={{marginTop: 5}}>
+              {item.name}
+            </Text>
+          </View>
+          <Button onPress={() => book()}>{t('book_now')}</Button>
         </View>
-        <View style={[styles.line, {backgroundColor: colors.border}]} />
-        {/* <ProfileDetail
-          image={userData.image}
-          textFirst={userData.name}
-          point={userData.point}
-          textSecond={userData.address}
-          textThird={userData.id}
-          style={{paddingHorizontal: 20}}
-          onPress={() => navigation.navigate('Profile1')}
-        />
-        <View style={{paddingHorizontal: 20, paddingVertical: 10}}>
-          <ProfilePerformance type="medium" data={userData.performance} />
-        </View>
-        <View style={styles.contentContact}>
-          <Tag
-            outline
-            style={{marginRight: 15}}
-            onPress={() => navigation.navigate('Messages')}>
-            {t('contact_host')}
-          </Tag>
-          <Tag primary onPress={() => navigation.navigate('Profile')}>
-            {t('view_profile')}
-          </Tag>
-        </View>
-        <View style={[styles.line, {backgroundColor: colors.border}]} /> */}
-        <View style={{paddingHorizontal: 20, marginTop: 10}}>
-          <HelpBlock
-            title={helpBlock.title}
-            description={helpBlock.description}
-            phone={item.contact_phone}
-            email={item.contact_email}
-            style={{margin: 20}}
-            onPress={() => {
-              navigation.navigate('ContactUs');
-            }}
-          />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+      </SafeAreaView>
+    </View>
   );
 }

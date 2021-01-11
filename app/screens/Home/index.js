@@ -385,7 +385,7 @@ export default function Home({navigation}) {
                 numReviews={item.numReviews}
                 services={item.features}
                 style={{marginLeft: 15, width: 150, marginBottom: 15}}
-                onPress={() => navigation.navigate('HotelDetail', {item})}
+                onPress={() => navigation.navigate('TourDetail', {item})}
               />
             )}
           />

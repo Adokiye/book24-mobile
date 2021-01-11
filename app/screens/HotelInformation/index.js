@@ -29,6 +29,7 @@ import {
   setOrderName,
   setOrderSubData,
   setOrderSubName,
+  setOrderType
 } from '../../actions/order';
 
 export default function HotelInformation({navigation, route}) {
@@ -72,16 +73,18 @@ export default function HotelInformation({navigation, route}) {
       dispatch(
         setOrderImage(item.images && item.images[0] && item.images[0].url),
       );
+    dispatch(setOrderType('hotel'))
+
       // this.props.setOrderCheckInDate(moment(book_in_date).format('MMMM DDDD YYYY HH:mm:ss'))
       // this.props.setOrderCheckOutDate(moment(book_out_date).format('MMMM DDDD YYYY HH:mm:ss'))
-      dispatch(setOrderName(item.name));
+      dispatch(setOrderName(hotelData.name));
       // this.props.setOrderSubData(
       //   {
       //     'No of adults':no_of_adults,
       //     'No of children': no_of_children,
       //   }
       // )
-      //  this.props.setOrderSubName(item.name)
+      dispatch(setOrderSubName(item.name));
       return navigation.navigate('PreviewBooking');
     }
   };

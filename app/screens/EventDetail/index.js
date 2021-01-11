@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   ScrollView,
@@ -12,122 +12,142 @@ import {
   SafeAreaView,
   Icon,
   Text,
-  ProfileGroup,
-  Tag,
-  Image,
+  StarRating,
+  PostListItem,
+  HelpBlock,
   Button,
+  RoomType,
+  HotelItem,
   EventCard,
 } from '@components';
-import {useTranslation} from 'react-i18next';
-import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
 import * as Utils from '@utils';
+import {InteractionManager} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
+import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
+import {connect, useDispatch} from 'react-redux';
+import {
+  setOrderUrl,
+  setOrderData,
+  setOrderPrice,
+  setOrderCheckInDate,
+  setOrderCheckOutDate,
+  setOrderImage,
+  setOrderName,
+  setOrderSubData,
+  setOrderSubName,
+  setOrderType
+} from '../../actions/order';
 import styles from './styles';
+import {HelpBlockData} from '@data';
+import {useTranslation} from 'react-i18next';
 import moment from 'moment';
 
-
-export default function EventDetail({navigation,route}) {
-  const {item} = route.params
-  const deltaY = new Animated.Value(0);
-  const heightImageBanner = Utils.scaleWithPixel(250, 1);
+export default function EventDetail({navigation, route}) {
+  const dispatch = useDispatch();
+  const {item, events} = route.params;
   const {colors} = useTheme();
   const {t} = useTranslation();
+  console.log('----');
+  console.log(item);
+  console.log('----');
+  const {features, bio} = item;
+  const eventData = item;
 
   const [heightHeader, setHeightHeader] = useState(Utils.heightHeader());
+  const [renderMapView, setRenderMapView] = useState(false);
   const [region] = useState({
-    latitude: 1.352083,
-    longitude: 103.819839,
-    latitudeDelta: 0.009,
+    latitude: 1.9344,
+    longitude: 103.358727,
+    latitudeDelta: 0.05,
     longitudeDelta: 0.004,
   });
-  const [facilities] = useState([
-    {id: '1', icon: 'wifi', name: 'Free Wifi', checked: true},
-    {id: '2', icon: 'bath', name: 'Shower'},
-    {id: '3', icon: 'paw', name: 'Pet Allowed'},
-    {id: '4', icon: 'bus', name: 'Shuttle Bus'},
-    {id: '5', icon: 'cart-plus', name: 'Supper Market'},
-    {id: '6', icon: 'clock', name: 'Open 24/7'},
-  ]);
-  function isInt(value) {
-    return !isNaN(value) && (function(x) { return (x | 0) === x; })(parseFloat(value))
-  }
-  const [relate] = useState([
-    {
-      id: '0',
-      image: Images.event4,
-      title: 'BBC Music Introducing',
-      time: 'Thu, Oct 31, 9:00am',
-      location: 'Tobacco Dock, London',
-    },
-    {
-      id: '1',
-      image: Images.event5,
-      title: 'Bearded Theory Spring Gathering',
-      time: 'Thu, Oct 31, 9:00am',
-      location: 'Tobacco Dock, London',
-    },
-  ]);
+  const [ticket_type] = useState(item.ticket_types);
+  const [helpBlock] = useState(HelpBlockData);
+  const deltaY = new Animated.Value(0);
+
+  useEffect(() => {
+    InteractionManager.runAfterInteractions(() => {
+      setRenderMapView(true);
+    });
+  }, []);
 
   const book = async () => {
-    let token = await AsyncStorage.getItem('token')
-    if (token == null ||token == "") {
-      return navigation.navigate("SignIn")
-    }  else {
-     
-      return navigation.navigate("PreviewBooking");
-    }
+    const new_data = {
+      event_id: item.id,
+      price: parseInt(item.ticket_type[0].price),
+    };
+    dispatch(setOrderData(new_data));
+    dispatch(setOrderUrl('eventTicket'));
+    dispatch(setOrderPrice(parseInt(item.ticket_type[0].price)));
+    dispatch(setOrderType('event'))
+
+    dispatch(
+      setOrderImage(item.images && item.images[0] && item.images[0].url),
+    );
+    // this.props.setOrderCheckInDate(moment(book_in_date).format('MMMM DDDD YYYY HH:mm:ss'))
+    // this.props.setOrderCheckOutDate(moment(book_out_date).format('MMMM DDDD YYYY HH:mm:ss'))
+    dispatch(setOrderName(item.name));
+    // this.props.setOrderSubData(
+    //   {
+    //     'No of adults':no_of_adults,
+    //     'No of children': no_of_children,
+    //   }
+    // )
+    dispatch(setOrderSubName(item.ticket_type[0].name));
+    return navigation.navigate('PreviewBooking');
   };
 
+  const bookTicket = async (item) => {
+    const new_data = {
+      event_id: eventData.id,
+      price: parseInt(item.price),
+    };
+    dispatch(setOrderData(new_data));
+    dispatch(setOrderUrl('eventTicket'));
+    dispatch(setOrderPrice(parseInt(item.price)));
+    dispatch(setOrderType('event'))
+
+    dispatch(
+      setOrderImage(eventData.images && eventData.images[0] && eventData.images[0].url),
+    );
+    // this.props.setOrderCheckInDate(moment(book_in_date).format('MMMM DDDD YYYY HH:mm:ss'))
+    // this.props.setOrderCheckOutDate(moment(book_out_date).format('MMMM DDDD YYYY HH:mm:ss'))
+    dispatch(setOrderName(eventData.name));
+    // this.props.setOrderSubData(
+    //   {
+    //     'No of adults':no_of_adults,
+    //     'No of children': no_of_children,
+    //   }
+    // )
+    dispatch(setOrderSubName(item.name));
+    return navigation.navigate('PreviewBooking');
+  };
+
+  const heightImageBanner = Utils.scaleWithPixel(250, 1);
+  const marginTopBanner = heightImageBanner - heightHeader - 40;
+
+  const average_price =
+    item.ticket_types.reduce((a, b) => a + (parseInt(b['price']) || 0), 0) /
+    item.ticket_types.length;
+  console.log(item.images[0].url);
   return (
     <View style={{flex: 1}}>
-      <Animated.View
+      <Animated.Image
+        source={{uri: item.images[0].url}}
         style={[
           styles.imgBanner,
           {
             height: deltaY.interpolate({
               inputRange: [
                 0,
-                Utils.scaleWithPixel(140),
-                Utils.scaleWithPixel(140),
+                Utils.scaleWithPixel(200),
+                Utils.scaleWithPixel(200),
               ],
               outputRange: [heightImageBanner, heightHeader, heightHeader],
             }),
           },
-        ]}>
-   {  !isInt(item.images[0].url) && <Image source={{uri:item.images[0].url}} style={{flex: 1}} />}
-
-        
-        <Animated.View
-          style={{
-            position: 'absolute',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-            paddingHorizontal: 20,
-            width: '100%',
-            bottom: 15,
-            opacity: deltaY.interpolate({
-              inputRange: [
-                0,
-                Utils.scaleWithPixel(140),
-                Utils.scaleWithPixel(140),
-              ],
-              outputRange: [1, 0, 0],
-            }),
-          }}>
-          {/* <View style={styles.rowBanner}>
-            <Image source={Images.profile2} style={styles.userIcon} />
-            <View style={{alignItems: 'flex-start'}}>
-              <Text headline semibold whiteColor>
-                Steve Garrett
-              </Text>
-              <Text footnote whiteColor>
-                5 {t('hour_ago')} | 100k {t('views')}
-              </Text>
-            </View>
-          </View> */}
-          {/* <Tag rateSmall>{t('sold_out')}</Tag> */}
-        </Animated.View>
-      </Animated.View>
+        ]}
+      />
       <SafeAreaView style={{flex: 1}} forceInset={{top: 'always'}}>
         {/* Header */}
         <Header
@@ -151,7 +171,7 @@ export default function EventDetail({navigation,route}) {
             navigation.goBack();
           }}
           onPressRight={() => {
-            navigation.navigate('PreviewImage');
+            navigation.navigate('PreviewImage', {item});
           }}
         />
         <ScrollView
@@ -162,239 +182,324 @@ export default function EventDetail({navigation,route}) {
               },
             },
           ])}
-          onContentSizeChange={() => {
-            setHeightHeader(Utils.heightHeader());
-          }}
+          onContentSizeChange={() => setHeightHeader(Utils.heightHeader())}
           scrollEventThrottle={8}>
-          <View style={{height: 255 - heightHeader}} />
-          <View
-            style={{
-              paddingHorizontal: 20,
-              marginBottom: 20,
-            }}>
-            <Text title1 semibold numberOfLines={1} style={{marginBottom: 10}}>
-              {item.name}
-            </Text>
-            <ProfileGroup
-              name="Steve, Lincoln, Harry"
-              detail={`15 {'\u20a6'}{t('people_like_this')}`}
-              users={[
-                {image: Images.profile1},
-                {image: Images.profile3},
-                {image: Images.profile4},
-              ]}
-            />
-            <Text body2 semibold style={{marginTop: 10}}>
-              {t('date_time')}
-            </Text>
-            <Text body2 grayColor style={{marginTop: 10, marginBottom: 20}}>
-            {moment(item.start_date).format("dddd, MMMM Do YYYY, h:mm:ss a")}
-            </Text>
-            <Text body2 semibold>
-              {t('address')}
-            </Text>
-            <Text body2 grayColor style={{marginVertical: 10}}>
-              {item.address}
-            </Text>
+          {/* Main Container */}
+          <View style={{paddingHorizontal: 20}}>
+            {/* Information */}
             <View
-              style={{
-                height: 180,
-              }}>
-              <MapView
-                provider={PROVIDER_GOOGLE}
-                style={styles.map}
-                region={region}
-                onRegionChange={() => {}}>
-                <Marker
-                  coordinate={{
-                    latitude: 1.352083,
-                    longitude: 103.819839,
-                  }}
-                />
-              </MapView>
-            </View>
-            <Text body2 semibold style={{marginTop: 20, marginBottom: 10}}>
-              {t('description')}
-            </Text>
-            <Text body2 grayColor lineHeight={20}>
-              {item.description}
-            </Text>
-            <View style={{alignItems: 'flex-end'}}>
-              <Text caption1 accentColor>
-                {t('see_details')}
+              style={[
+                styles.contentBoxTop,
+                {
+                  marginTop: marginTopBanner,
+                  backgroundColor: colors.card,
+                  shadowColor: colors.border,
+                  borderColor: colors.border,
+                },
+              ]}>
+              <Text title2 semibold style={{marginBottom: 5}}>
+                {item.name}
+              </Text>
+              <StarRating
+                disabled={true}
+                starSize={14}
+                maxStars={5}
+                rating={4.5}
+                selectedStar={(rating) => {}}
+                fullStarColor={BaseColor.yellowColor}
+              />
+              <Text
+                body2
+                numberOfLines={3}
+                style={{
+                  marginTop: 5,
+                  textAlign: 'center',
+                }}>
+                {item.description}
               </Text>
             </View>
-            <Text title3 semibold style={{marginTop: 10, marginBottom: 5}}>
-              {t('price')}
-            </Text>
-            <View style={[styles.itemPrice, {borderColor: colors.border}]}>
-              <Text headline semibold>
-                #{t('ticket_general')}
-              </Text>
-              <Text body2 grayColor style={{marginVertical: 5}}>
-                Provide a baseline experience for attendees. They also help you
-                convert people who don’t want
-              </Text>
-              <View style={styles.linePrice}>
-                <Text title3 primaryColor semibold>
-                  {'\u20a6'}399,99
-                </Text>
-                <View style={styles.iconRight}>
-                  <TouchableOpacity>
-                    <Icon
-                      name="minus-circle"
-                      size={24}
-                      color={BaseColor.grayColor}
-                    />
-                  </TouchableOpacity>
-                  <Text title1 style={{paddingHorizontal: 10}}>
-                    1
+            {/* Rating Review */}
+            <View
+              style={[styles.blockView, {borderBottomColor: colors.border}]}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <View
+                  style={[
+                    styles.circlePoint,
+                    {backgroundColor: colors.primary},
+                  ]}>
+                  <Text title3 whiteColor>
+                    9.5
                   </Text>
-                  <TouchableOpacity>
-                    <Icon name="plus-circle" size={24} color={colors.primary} />
-                  </TouchableOpacity>
+                </View>
+                <View>
+                  <Text title3 primaryColor style={{marginBottom: 3}}>
+                    {t('excellent')}
+                  </Text>
+                  <Text body2>See 801 reviews</Text>
+                </View>
+              </View>
+              <View style={styles.contentRateDetail}>
+                <View style={[styles.contentLineRate, {marginRight: 10}]}>
+                  <View style={{flex: 1}}>
+                    <Text caption2 grayColor style={{marginBottom: 5}}>
+                      Interior Design
+                    </Text>
+                    <View style={styles.lineBaseRate} />
+                    <View
+                      style={[
+                        styles.linePercent,
+                        {backgroundColor: colors.accent},
+                        {width: '40%'},
+                      ]}
+                    />
+                  </View>
+                  <Text caption2 style={{marginLeft: 15}}>
+                    4
+                  </Text>
+                </View>
+                <View style={styles.contentLineRate}>
+                  <View style={{flex: 1}}>
+                    <Text caption2 grayColor style={{marginBottom: 5}}>
+                      Server Quality
+                    </Text>
+                    <View style={styles.lineBaseRate} />
+                    <View
+                      style={[
+                        styles.linePercent,
+                        {backgroundColor: colors.accent},
+                        {width: '70%'},
+                      ]}
+                    />
+                  </View>
+                  <Text caption2 style={{marginLeft: 15}}>
+                    7
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.contentRateDetail}>
+                <View style={[styles.contentLineRate, {marginRight: 10}]}>
+                  <View style={{flex: 1}}>
+                    <Text caption2 grayColor style={{marginBottom: 5}}>
+                      Interio Design
+                    </Text>
+                    <View style={styles.lineBaseRate} />
+                    <View
+                      style={[
+                        styles.linePercent,
+                        {backgroundColor: colors.accent},
+                        {width: '50%'},
+                      ]}
+                    />
+                  </View>
+                  <Text caption2 style={{marginLeft: 15}}>
+                    5
+                  </Text>
+                </View>
+                <View style={styles.contentLineRate}>
+                  <View style={{flex: 1}}>
+                    <Text caption2 grayColor style={{marginBottom: 5}}>
+                      Server Quality
+                    </Text>
+                    <View style={styles.lineBaseRate} />
+                    <View
+                      style={[
+                        styles.linePercent,
+                        {backgroundColor: colors.accent},
+                        {width: '60%'},
+                      ]}
+                    />
+                  </View>
+                  <Text caption2 style={{marginLeft: 15}}>
+                    6
+                  </Text>
                 </View>
               </View>
             </View>
-            <View style={[styles.itemPrice, {borderColor: colors.border}]}>
+            {/* Description */}
+            <View
+              style={[styles.blockView, {borderBottomColor: colors.border}]}>
               <Text headline semibold>
-                #{t('ticket_vip')}
+                {item.description}
               </Text>
-              <Text body2 grayColor style={{marginVertical: 5}}>
-                Offer attendees the exact experience they’re looking for, at the
-                exact price they’re willing to pay.
+              <Text body2 style={{marginTop: 5}}>
+                {item.address}
               </Text>
-              <View style={styles.linePrice}>
-                <Text title3 primaryColor semibold>
-                  {'\u20a6'}299,99
-                </Text>
-                <View style={styles.iconRight}>
-                  <TouchableOpacity>
-                    <Icon
-                      name="minus-circle"
-                      size={24}
-                      color={BaseColor.grayColor}
+            </View>
+            {/* Map location */}
+            <View
+              style={[styles.blockView, {borderBottomColor: colors.border}]}>
+              <Text headline style={{marginBottom: 5}} semibold>
+                {item.location.substring(0, 1).toUpperCase() +
+                  item.location.substring(1, item.location.length)}
+              </Text>
+              <Text body2 numberOfLines={2}>
+                {item.address}
+              </Text>
+              {/* <View
+                style={{
+                  height: 180,
+                  width: '100%',
+                  marginTop: 10,
+                }}>
+                {renderMapView && (
+                  <MapView
+                    provider={PROVIDER_GOOGLE}
+                    style={styles.map}
+                    region={region}
+                    onRegionChange={() => {}}>
+                    <Marker
+                      coordinate={{
+                        latitude: 1.9344,
+                        longitude: 103.358727,
+                      }}
                     />
-                  </TouchableOpacity>
-                  <Text title1 style={{paddingHorizontal: 10}}>
-                    1
+                  </MapView>
+                )}
+              </View> */}
+            </View>
+            {/* Open Time */}
+            <View
+              style={[styles.blockView, {borderBottomColor: colors.border}]}>
+              <Text headline semibold>
+                {t('good_to_know')}
+              </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  marginTop: 5,
+                }}>
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                  }}>
+                  <Text body2 grayColor>
+                    {'Start Date'}
                   </Text>
-                  <TouchableOpacity>
-                    <Icon name="plus-circle" size={24} color={colors.primary} />
-                  </TouchableOpacity>
+                  <Text body2 accentColor semibold>
+                    {moment(item.start_date).format('DD MMM Do YYYY')}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                  }}>
+                  <Text body2 grayColor>
+                    {'End Date'}
+                  </Text>
+                  <Text body2 accentColor semibold>
+                    {moment(item.end_date).format('DD MMM Do YYYY')}
+                  </Text>
                 </View>
               </View>
             </View>
-            <View style={[styles.itemPrice, {borderColor: colors.border}]}>
+            {/* Rooms */}
+            <View
+              style={[styles.blockView, {borderBottomColor: colors.border}]}>
               <Text headline semibold>
-                #{t('ticket_reserved')}
+                {'Ticket Types'}
               </Text>
-              <Text body2 grayColor style={{marginVertical: 5}}>
-                Provide big value for attendees wanting to be closer to a
-                performer or speaker at your event.
-              </Text>
-              <View style={styles.linePrice}>
-                <Text title3 primaryColor semibold>
-                  {'\u20a6'}199,99
-                </Text>
-                <View style={styles.iconRight}>
-                  <TouchableOpacity>
-                    <Icon
-                      name="minus-circle"
-                      size={24}
-                      color={BaseColor.grayColor}
-                    />
-                  </TouchableOpacity>
-                  <Text title1 style={{paddingHorizontal: 10}}>
-                    1
-                  </Text>
-                  <TouchableOpacity>
-                    <Icon name="plus-circle" size={24} color={colors.primary} />
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-            <Text
-              title3
-              semibold
-              style={{
-                paddingTop: 10,
-              }}>
-              {t('facilities')}
-            </Text>
-            <View style={[styles.wrapContent, {borderColor: colors.border}]}>
-              {facilities.map(item => {
-                return (
-                  <Tag
-                    icon={
-                      <Icon
-                        name={item.icon}
-                        size={12}
-                        color={colors.accent}
-                        solid
-                        style={{marginRight: 5}}
-                      />
+              <FlatList
+                data={item.ticket_type}
+                keyExtractor={(item, index) => item.id}
+                renderItem={({item}) => (
+                  <RoomType
+                    image={'https://res.cloudinary.com/gorge/image/upload/v1610376026/ticket-clipart-purge-clipart-ticket-85041.jpg'}
+                    name={item.name}
+                    price={item.price}
+                    available={item.available}
+                    services={item.services}
+                    style={{marginTop: 10}}
+                    onPress={() =>
+                      bookTicket(item)
                     }
-                    chip
-                    key={item.id}
-                    style={{
-                      marginTop: 10,
-                      marginRight: 10,
-                    }}>
-                    {item.name}
-                  </Tag>
-                );
-              })}
+                  />
+                )}
+              />
+            </View>
+            {/* Activities */}
+            <View
+              style={[styles.blockView, {borderBottomColor: colors.border}]}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginBottom: 10,
+                  alignItems: 'flex-end',
+                }}>
+                <Text headline semibold>
+                  {'You might also like'}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('DashboardEvent');
+                  }}>
+                  <Text caption1 grayColor>
+                    {t('show_more')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <FlatList
+                contentContainerStyle={{paddingLeft: 5, paddingRight: 20}}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                data={events}
+                keyExtractor={(item, index) => item.id}
+                renderItem={({item, index}) => {
+                  if (index < 4) {
+                    return (
+                      <EventCard
+                        image={item.images[0].url}
+                        title={item.name}
+                        time={item.start_date}
+                        location={item.location}
+                        onPress={() =>
+                          navigation.navigate('EventDetail', {item})
+                        }
+                        style={{marginLeft: 15, width: 150}}
+                      />
+                    );
+                  }
+                }}
+              />
+            </View>
+            {/* Help Block Information */}
+            <View
+              style={[styles.blockView, {borderBottomColor: colors.border}]}>
+              <HelpBlock
+                title={helpBlock.title}
+                description={helpBlock.description}
+                phone={item.contact_phone || item.contact_website}
+                email={item.contact_email}
+                style={{margin: 20}}
+                onPress={() => {
+                  navigation.navigate('ContactUs');
+                }}
+              />
             </View>
           </View>
-          <Text
-            title3
-            semibold
-            style={{
-              marginLeft: 20,
-              marginBottom: 20,
-            }}>
-            {t('you_may_also_like')}
-          </Text>
-          {/* <FlatList
-            contentContainerStyle={{
-              paddingLeft: 5,
-              paddingRight: 20,
-              marginBottom: 20,
-            }}
-            showsHorizontalScrollIndicator={false}
-            horizontal={true}
-            data={relate}
-            keyExtractor={(item, index) => item.id}
-            renderItem={({item, index}) => (
-              <EventCard
-                image={item.image}
-                title={item.title}
-                time={item.time}
-                location={item.location}
-                onPress={() => navigation.navigate('PreviewBooking')}
-                style={{marginLeft: 15}}
-              />
-            )}
-          /> */}
         </ScrollView>
         {/* Pricing & Booking Process */}
         <View
           style={[styles.contentButtonBottom, {borderTopColor: colors.border}]}>
           <View>
-            <Text caption1 semibold grayColor>
-              {t('avg_price')}
+            <Text caption1 semibold>
+              {t('price')}
             </Text>
             <Text title3 primaryColor semibold>
-              {'\u20a6'}0
+              {'\u20a6'}
+              {average_price}
             </Text>
-            <Text caption1 semibold grayColor style={{marginTop: 5}}>
-              {t('person_ticket')}
+            <Text caption1 semibold style={{marginTop: 5}}>
+              {item.ticket_type[0].name}
             </Text>
           </View>
-          <Button onPress={() => item.paid?book():{}}>
-            {t('book_now')}
-          </Button>
+          <Button onPress={() => book()}>{t('book_now')}</Button>
         </View>
       </SafeAreaView>
     </View>

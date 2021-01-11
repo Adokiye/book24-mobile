@@ -66,21 +66,54 @@ const PreviewBooking = ({navigation, route, order}) => {
   const book = async () => {
     let token = await AsyncStorage.getItem('token');
     let new_data = order.data;
-    new_data.check_in_date = checkInDate;
-    new_data.check_out_date = checkOutDate;
-    new_data.no_of_adults = adultNo;
-    new_data.no_of_children = childrenNo;
-    dispatch(setOrderData(new_data));
-    dispatch(
-      setOrderCheckInDate(
-        moment(checkInDate).format('MMMM DDDD YYYY HH:mm:ss'),
-      ),
-    );
-    dispatch(
-      setOrderCheckOutDate(
-        moment(checkOutDate).format('MMMM DDDD YYYY HH:mm:ss'),
-      ),
-    );
+    if (order.order_type == 'hotel') {
+      new_data.check_in_date = checkInDate;
+      new_data.check_out_date = checkOutDate;
+      new_data.no_of_adults = adultNo;
+      new_data.no_of_children = childrenNo;
+      dispatch(setOrderData(new_data));
+      dispatch(
+        setOrderCheckInDate(
+          moment(checkInDate).format('MMMM DDDD YYYY HH:mm:ss'),
+        ),
+      );
+      dispatch(
+        setOrderCheckOutDate(
+          moment(checkOutDate).format('MMMM DDDD YYYY HH:mm:ss'),
+        ),
+      );
+    }
+    if (order.order_type == 'rental') {
+      new_data.start_date = checkInDate;
+      new_data.end_date = checkOutDate;
+      dispatch(setOrderData(new_data));
+      dispatch(
+        setOrderCheckInDate(
+          moment(checkInDate).format('MMMM DDDD YYYY HH:mm:ss'),
+        ),
+      );
+      dispatch(
+        setOrderCheckOutDate(
+          moment(checkOutDate).format('MMMM DDDD YYYY HH:mm:ss'),
+        ),
+      );
+    }
+    if (order.order_type == 'car') {
+      new_data.pickup_date = checkInDate;
+      new_data.dropoff_date = checkOutDate;
+      dispatch(setOrderData(new_data));
+      dispatch(
+        setOrderCheckInDate(
+          moment(checkInDate).format('MMMM DDDD YYYY HH:mm:ss'),
+        ),
+      );
+      dispatch(
+        setOrderCheckOutDate(
+          moment(checkOutDate).format('MMMM DDDD YYYY HH:mm:ss'),
+        ),
+      );
+    }
+
     return token == null || token == ''
       ? navigation.navigate('CheckOutNoAuth')
       : navigation.navigate('CheckOut');
@@ -107,101 +140,113 @@ const PreviewBooking = ({navigation, route, order}) => {
       />
       <ScrollView>
         <View style={{paddingHorizontal: 20}}>
-          <Text headline>{'No of Adults'}</Text>
-          <TextInput
-            style={{marginTop: 10}}
-            onChangeText={(text) => setAdultNo(text)}
-            placeholder={'Enter number of adults'}
-            //   success={success.card}
-            keyboardType="numeric"
-            value={adultNo}
-          />
-          <Text headline>{'No of Children'}</Text>
-          <TextInput
-            style={{marginTop: 10}}
-            onChangeText={(text) => setChildrenNo(text)}
-            placeholder={'Enter number of children'}
-            //   success={success.card}
-            keyboardType="numeric"
-            value={childrenNo}
-          />
+          {order.order_type == 'hotel' && (
+            <Text headline>{'No of Adults'}</Text>
+          )}
+          {order.order_type == 'hotel' && (
+            <TextInput
+              style={{marginTop: 10}}
+              onChangeText={(text) => setAdultNo(text)}
+              placeholder={'Enter number of adults'}
+              //   success={success.card}
+              keyboardType="numeric"
+              value={adultNo}
+            />
+          )}
+          {order.order_type == 'hotel' && (
+            <Text headline>{'No of Children'}</Text>
+          )}
+          {order.order_type == 'hotel' && (
+            <TextInput
+              style={{marginTop: 10}}
+              onChangeText={(text) => setChildrenNo(text)}
+              placeholder={'Enter number of children'}
+              //   success={success.card}
+              keyboardType="numeric"
+              value={childrenNo}
+            />
+          )}
           <View style={[styles.blockView, {borderBottomColor: colors.border}]}>
             <Text body2 style={{marginBottom: 10}}>
-              {t('hotels')}
+              {order.order_type.substring(0, 1).toUpperCase() +
+                order.order_type.substring(1, order.order_type.length)}
             </Text>
             <Text body1 semibold>
               {order.name}
             </Text>
           </View>
-          <View style={[styles.blockView, {borderBottomColor: colors.border}]}>
-            <View style={{flexDirection: 'row', marginTop: 10}}>
-              <View style={{flex: 1}}>
-                <Text body2>{t('check_in')}</Text>
+          {order.order_type == 'hotel' || order.order_type == 'car' || order.order_type == 'rental' && (
+            <View
+              style={[styles.blockView, {borderBottomColor: colors.border}]}>
+              <View style={{flexDirection: 'row', marginTop: 10}}>
+                <View style={{flex: 1}}>
+                  <Text body2>{order.order_type == 'hotel'&&t('check_in')}
+                  {order.order_type == 'rental'&&t('check_in')}
+                  {order.order_type == 'car'&&'Pickup Date'}</Text>
+                </View>
+                <TouchableOpacity
+                  style={{flex: 1, alignItems: 'flex-end'}}
+                  onPress={showDatePicker}>
+                  <Text body2 semibold>
+                  {order.order_type == 'hotel'&&t('check_in')}
+                  {order.order_type == 'rental'&&t('check_in')}
+                  {order.order_type == 'car'&&'Pickup Date'}
+                  </Text>
+                  <Text caption1 grayColor>
+                    {moment(checkInDate).format('MMMM Do YYYY HH:mm:ss')}
+                  </Text>
+                </TouchableOpacity>
+                <DateTimePickerModal
+                  isVisible={isDatePickerVisible}
+                  mode="datetime"
+                  onConfirm={handleConfirm}
+                  onCancel={hideDatePicker}
+                />
               </View>
-              <TouchableOpacity
-                style={{flex: 1, alignItems: 'flex-end'}}
-                onPress={showDatePicker}>
-                <Text body2 semibold>
-                  {t('check_in')}
-                </Text>
-                <Text caption1 grayColor>
-                  {moment(checkInDate).format('MMMM Do YYYY HH:mm:ss')}
-                </Text>
-              </TouchableOpacity>
-              <DateTimePickerModal
-                isVisible={isDatePickerVisible}
-                mode="datetime"
-                onConfirm={handleConfirm}
-                onCancel={hideDatePicker}
-              />
+
+              <View style={{flexDirection: 'row', marginTop: 10}}>
+                <View style={{flex: 1}}>
+                  <Text body2>{order.order_type == 'hotel'&&t('check_out')}
+                  {order.order_type == 'rental'&&t('check_out')}
+                  {order.order_type == 'car'&&'Dropoff Date'}</Text>
+                </View>
+                <TouchableOpacity
+                  style={{flex: 1, alignItems: 'flex-end'}}
+                  onPress={showDatePicker_}>
+                  <Text body2 semibold>
+                    {t('check_out')}
+                  </Text>
+                  <Text caption1 grayColor>
+                    {moment(checkOutDate).format('MMMM Do YYYY HH:mm:ss')}
+                  </Text>
+                </TouchableOpacity>
+                <DateTimePickerModal
+                  isVisible={isDatePickerVisible_}
+                  mode="datetime"
+                  onConfirm={handleConfirm_}
+                  onCancel={hideDatePicker_}
+                />
+              </View>
+              <View style={{flexDirection: 'row', marginTop: 10}}>
+                <View style={{flex: 1}}>
+                  <Text body2>{t('duration')}</Text>
+                </View>
+                <View style={{flex: 1, alignItems: 'flex-end'}}>
+                  <Text body2 semibold>
+                    {no_of_days} {t('night')}
+                  </Text>
+                </View>
+              </View>
             </View>
-            <View style={{flexDirection: 'row', marginTop: 10}}>
-              <View style={{flex: 1}}>
-                <Text body2>{t('check_out')}</Text>
-              </View>
-              <TouchableOpacity
-                style={{flex: 1, alignItems: 'flex-end'}}
-                onPress={showDatePicker_}>
-                <Text body2 semibold>
-                  {t('check_out')}
-                </Text>
-                <Text caption1 grayColor>
-                  {moment(checkOutDate).format('MMMM Do YYYY HH:mm:ss')}
-                </Text>
-              </TouchableOpacity>
-              <DateTimePickerModal
-                isVisible={isDatePickerVisible_}
-                mode="datetime"
-                onConfirm={handleConfirm_}
-                onCancel={hideDatePicker_}
-              />
-            </View>
-            <View style={{flexDirection: 'row', marginTop: 10}}>
-              <View style={{flex: 1}}>
-                <Text body2>{t('duration')}</Text>
-              </View>
-              <View style={{flex: 1, alignItems: 'flex-end'}}>
-                <Text body2 semibold>
-                  1 {t('night')}
-                </Text>
-              </View>
-            </View>
-          </View>
+          )}
           <View style={[styles.blockView, {borderBottomColor: colors.border}]}>
             <Text body2 style={{marginBottom: 10}}>
-              {t('room')}
+              {order.order_type == 'hotel' && t('room')}
+              {order.order_type == 'event' && 'Ticket Type'}
+              {order.order_type == 'tour' && 'Tour Package'}
             </Text>
             <Text body1 semibold style={{marginBottom: 5}}>
               {order.sub_name} (x1)
-            </Text>
-            {/* <Text body2 style={{marginBottom: 5}}>
-              Other hygienic practices that the new hotel, among other guests
-            </Text>
-            <Text body2 style={{marginBottom: 5}}>
-              Other hygienic practices that the new hotel, among other guests
-            </Text> */}
-            <Text body2 style={{marginBottom: 5}}>
-              Other hygienic practices that the new hotel, among other guests
             </Text>
           </View>
           {/* <View style={[styles.blockView, {borderBottomColor: colors.border}]}>
@@ -223,7 +268,7 @@ const PreviewBooking = ({navigation, route, order}) => {
               Price Details
             </Text>
             <Text body1 semibold style={{marginBottom: 5}}>
-              {'\u20a6'} {order.price}
+              {'\u20a6'} {parseInt(order.price)}
             </Text>
           </View>
         </View>
@@ -231,16 +276,20 @@ const PreviewBooking = ({navigation, route, order}) => {
       <View
         style={[styles.contentButtonBottom, {borderTopColor: colors.border}]}>
         <View>
-          <Text caption1 semibold grayColor>
-            {no_of_days} {t('day')} / 1 {t('night')}
-          </Text>
+          {order.order_type == 'hotel' && (
+            <Text caption1 semibold grayColor>
+              {no_of_days} {t('day')} / 1 {t('night')}
+            </Text>
+          )}
           <Text title3 primaryColor semibold>
             {'\u20a6'}
-            {order.price}
+            {parseInt(order.price)}
           </Text>
-          <Text caption1 semibold grayColor style={{marginTop: 5}}>
-            {adultNo} {t('adults')} / {childrenNo} {t('children')}
-          </Text>
+          {order.order_type == 'hotel' && (
+            <Text caption1 semibold grayColor style={{marginTop: 5}}>
+              {adultNo} {t('adults')} / {childrenNo} {t('children')}
+            </Text>
+          )}
         </View>
         <Button onPress={() => book()}>{t('continue')}</Button>
       </View>

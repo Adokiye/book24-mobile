@@ -18,3 +18,4 @@ export const ORDER_CHECK_IN_DATE = 'ORDER_CHECK_IN_DATE';
 export const ORDER_CHECK_OUT_DATE = 'ORDER_CHECK_OUT_DATE';
 export const ORDER_SUB_DATA = 'ORDER_SUB_DATA';
 export const ORDER_SUB_NAME = 'ORDER_SUB_NAME';
+export const ORDER_TYPE = 'ORDER_TYPE';

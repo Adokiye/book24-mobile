@@ -129,7 +129,7 @@ export default function Event({navigation}) {
                   user={item.user}
                   numTicket={item.numTicket}
                   liked={item.liked}
-                  onPress={() => navigation.navigate('EventDetail')}
+                  onPress={() => navigation.navigate('EventDetail',{events})}
                   onPressTag={() => navigation.navigate('Review')}
                 />
               )}
@@ -203,7 +203,7 @@ export default function Event({navigation}) {
                   numTicket={item.numTicket}
                   liked={item.liked}
                   style={{marginLeft: 15, marginBottom: 20}}
-                  onPress={() => navigation.navigate('EventDetail')}
+                  onPress={() => navigation.navigate('EventDetail',{events})}
                   onPressTag={() => navigation.navigate('Review')}
                 />
               )}
@@ -281,7 +281,7 @@ export default function Event({navigation}) {
                   style={{
                     marginBottom: 20,
                   }}
-                  onPress={() => navigation.navigate('EventDetail')}
+                  onPress={() => navigation.navigate('EventDetail',{events})}
                   onPressTag={() => navigation.navigate('Review')}
                 />
               )}
@@ -351,7 +351,7 @@ export default function Event({navigation}) {
                   user={item.user}
                   numTicket={item.numTicket}
                   liked={item.liked}
-                  onPress={() => navigation.navigate('EventDetail')}
+                  onPress={() => navigation.navigate('EventDetail',{events})}
                   onPressTag={() => navigation.navigate('Review')}
                 />
               )}

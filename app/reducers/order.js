@@ -8,7 +8,8 @@ import {
   ORDER_NAME,
   ORDER_SUB_DATA,
   ORDER_SUB_NAME,
-} from "../actions/actionTypes";
+  ORDER_TYPE,
+} from '../actions/actionTypes';
 
 const initialstate = {
   url: null,
@@ -20,6 +21,7 @@ const initialstate = {
   check_in_date: null,
   check_out_date: null,
   sub_data: null,
+  order_type: null,
 };
 
 export default (state = initialstate, action) => {
@@ -29,10 +31,16 @@ export default (state = initialstate, action) => {
         data: action.payload,
       });
     case ORDER_URL:
-      console.log("ORDER_URL");
+      console.log('ORDER_URL');
       console.log(action.payload);
       return Object.assign({}, state, {
         url: action.payload,
+      });
+    case ORDER_TYPE:
+      console.log('ORDER_TYPE');
+      console.log(action.payload);
+      return Object.assign({}, state, {
+        order_type: action.payload,
       });
     case ORDER_PRICE:
       return Object.assign({}, state, {
@@ -47,9 +55,9 @@ export default (state = initialstate, action) => {
         name: action.payload,
       });
     case ORDER_SUB_NAME:
-        return Object.assign({}, state, {
-          sub_name: action.payload,
-    });
+      return Object.assign({}, state, {
+        sub_name: action.payload,
+      });
     case ORDER_CHECK_IN_DATE:
       return Object.assign({}, state, {
         check_in_date: action.payload,

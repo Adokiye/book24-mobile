@@ -34,6 +34,7 @@ import {
   setOrderName,
   setOrderSubData,
   setOrderSubName,
+  setOrderType,
 } from '../../actions/order';
 import styles from './styles';
 import {HelpBlockData} from '@data';
@@ -112,6 +113,7 @@ export default function HotelDetail({navigation, route}) {
       dispatch(setOrderData(new_data));
       dispatch(setOrderUrl('hotelBooking'));
       dispatch(setOrderPrice(parseInt(room.price)));
+      dispatch(setOrderType('hotel'));
       dispatch(
         setOrderImage(item.images && item.images[0] && item.images[0].url),
       );
@@ -154,7 +156,7 @@ export default function HotelDetail({navigation, route}) {
     //     'No of children': no_of_children,
     //   }
     // )
-    //  this.props.setOrderSubName(item.rooms[0].name)
+    dispatch(setOrderSubName(item.rooms[0].name));
     return navigation.navigate('PreviewBooking');
   };
 
@@ -370,20 +372,29 @@ export default function HotelDetail({navigation, route}) {
                 styles.contentService,
                 {borderBottomColor: colors.border},
               ]}>
-              {item.features.map((item, index) => (
-                <View
-                  style={{
-                    alignItems: 'center',
-                    marginBottom: 10,
-                    marginRight: 10,
-                  }}
-                  key={'service' + index}>
-                  <Icon name={'check'} size={24} color={colors.accent} />
-                  <Text overline grayColor style={{marginTop: 4}}>
-                    {item.name || item}
-                  </Text>
-                </View>
-              ))}
+              <FlatList
+                contentContainerStyle={{paddingLeft: 5, paddingRight: 20}}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                data={item.features}
+                keyExtractor={(item, index) => item.id}
+                renderItem={({item, index}) => {
+                  return (
+                    <View
+                      style={{
+                        alignItems: 'center',
+                        marginBottom: 10,
+                        marginRight: 10,
+                      }}
+                      key={'service' + index}>
+                      <Icon name={'check'} size={24} color={colors.accent} />
+                      <Text overline grayColor style={{marginTop: 4}}>
+                        {item.name || item}
+                      </Text>
+                    </View>
+                  );
+                }}
+              />
             </View>
             {/* Map location */}
             <View
@@ -395,7 +406,7 @@ export default function HotelDetail({navigation, route}) {
               <Text body2 numberOfLines={2}>
                 {item.address}
               </Text>
-              <View
+              {/* <View
                 style={{
                   height: 180,
                   width: '100%',
@@ -415,7 +426,7 @@ export default function HotelDetail({navigation, route}) {
                     />
                   </MapView>
                 )}
-              </View>
+              </View> */}
             </View>
             {/* Open Time */}
             <View
@@ -589,7 +600,7 @@ export default function HotelDetail({navigation, route}) {
               {average_price}
             </Text>
             <Text caption1 semibold style={{marginTop: 5}}>
-              {t('avg_night')}
+              {item.rooms[0].name}
             </Text>
           </View>
           <Button onPress={() => book()}>{t('book_now')}</Button>
