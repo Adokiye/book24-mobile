@@ -7,6 +7,7 @@ import {Calendar} from 'react-native-calendars';
 import Modal from 'react-native-modal';
 import {BaseColor, FontFamily, useTheme, DefaultFont} from '@config';
 import {useTranslation} from 'react-i18next';
+import moment from 'moment'
 
 export default function BookingTime(props) {
   const {t} = useTranslation();
@@ -105,7 +106,7 @@ export default function BookingTime(props) {
               }}
               markedDates={startMode ? markedDatesIn : markedDatesOut}
               current={startMode ? checkInTime : checkOutTime}
-              minDate={minDate}
+              minDate={'01-01-2021'}
               maxDate={maxDate}
               onDayPress={day => {
                 setDaySelected(day.dateString, startMode);
@@ -164,7 +165,7 @@ export default function BookingTime(props) {
       </Modal>
       <TouchableOpacity style={styles.itemPick} onPress={() => openModal()}>
         <Text caption1 light style={{marginBottom: 5}}>
-          {t('check_in')}
+          {'Check In Time'}
         </Text>
         <Text headline semibold>
           {checkInTime}
@@ -175,7 +176,7 @@ export default function BookingTime(props) {
         style={styles.itemPick}
         onPress={() => openModal(false)}>
         <Text caption1 light style={{marginBottom: 5}}>
-          {t('check_out')}
+          {'Check Out Time'}
         </Text>
         <Text headline semibold>
           {checkOutTime}
@@ -197,10 +198,10 @@ BookingTime.propTypes = {
 
 BookingTime.defaultProps = {
   style: {},
-  checkInTime: '2020-02-25',
+  checkInTime: moment().format('DD-mm-yyyy'),
   checkOutTime: '2020-02-29',
-  minDate: '2019-05-10',
-  maxDate: '2020-05-30',
+  minDate: moment().format('dd-mm-yyyy'),
+  maxDate: '',
   onCancel: () => {},
   onChange: () => {},
 };

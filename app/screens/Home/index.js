@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   ScrollView,
@@ -29,39 +29,39 @@ export default function Home({navigation}) {
   const [icons] = useState([
     {
       icon: 'bed',
-      name: 'hotels',
+      name: 'Hotels',
       route: 'Hotel',
     },
     {
       icon: 'calendar-alt',
-      name: 'event',
+      name: 'Event',
       route: 'DashboardEvent',
     },
     {
       icon: 'globe',
-      name: 'tours',
+      name: 'Tours',
       route: 'Tour',
     },
-    
+
     {
       icon: 'plane',
-      name: 'flight',
+      name: 'Flight',
       route: 'FlightSearch',
     },
     {
       icon: 'ship',
-      name: 'cruise',
-      route: 'CruiseSearch',
+      name: 'Cruise',
+      route: 'Cruise',
     },
     {
       icon: 'home',
       name: 'Rental',
       route: 'Rental',
     },
-    
+
     {
       icon: 'car-alt',
-      name: 'car',
+      name: 'Car',
       route: 'OverViewCar',
     },
     {
@@ -78,44 +78,47 @@ export default function Home({navigation}) {
   const deltaY = new Animated.Value(0);
 
   useEffect(() => {
-getData()
-}, []);
+    getData();
+  }, []);
 
-const getData = async() => {
-  await axios.get(BASE_URL+'hotels')
-  .then(async res => {
-    // console.log(res.data.rows)
-      setHotels(res.data.rows);
-     await axios.get(BASE_URL+'events')
-      .then(async res => {
+  const getData = async () => {
+    await axios
+      .get(BASE_URL + 'hotels')
+      .then(async (res) => {
         // console.log(res.data.rows)
-          setEvents(res.data.rows);
-         await axios.get(BASE_URL+'tours')
-          .then(res => {
-           // console.log(res.data.rows)
-              setTours(res.data.rows);
-           //   setLoad(true);
+        setHotels(res.data.rows);
+        await axios
+          .get(BASE_URL + 'events')
+          .then(async (res) => {
+            // console.log(res.data.rows)
+            setEvents(res.data.rows);
+            await axios
+              .get(BASE_URL + 'tours')
+              .then((res) => {
+                // console.log(res.data.rows)
+                setTours(res.data.rows);
+                //   setLoad(true);
+              })
+              .catch((err) => {
+                console.log(err);
+                //   setError(err.message);
+                //    setLoad(true)
+              });
+            //   setLoad(true);
           })
-          .catch(err => {
-            console.log(err)
-           //   setError(err.message);
-          //    setLoad(true)
-          })
-       //   setLoad(true);
+          .catch((err) => {
+            console.log(err);
+            //   setError(err.message);
+            //    setLoad(true)
+          });
+        //   setLoad(true);
       })
-      .catch(err => {
-        console.log(err)
-       //   setError(err.message);
-      //    setLoad(true)
-      })
-   //   setLoad(true);
-  })
-  .catch(err => {
-    console.log(err)
-   //   setError(err.message);
-  //    setLoad(true)
-  })
-}
+      .catch((err) => {
+        console.log(err);
+        //   setError(err.message);
+        //    setLoad(true)
+      });
+  };
 
   /**
    * @description Show icon services on form searching
@@ -156,7 +159,7 @@ const getData = async() => {
 
   return (
     <View style={{flex: 1}}>
-      <Animated.Image
+      {/* <Animated.Image
         source={Images.trip3}
         style={[
           styles.imageBackground,
@@ -171,8 +174,32 @@ const getData = async() => {
             }),
           },
         ]}
-      />
+      /> */}
       <SafeAreaView style={{flex: 1}} forceInset={{top: 'always'}}>
+        <View
+          style={{
+            width: '100%',
+            backgroundColor: '#fff',
+            height: 50,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingVertical: 10,
+            elevation: 3,
+          }}>
+          <Image
+            source={Images.logoBlue}
+            style={{
+              width: 30,
+              height: 30,
+              resizeMethod: 'contain',
+              marginRight: 10,
+            }}
+          />
+          <Text title3 semibold style={{fontSize: 15}}>
+            Book24
+          </Text>
+        </View>
         <ScrollView
           onScroll={Animated.event([
             {
@@ -188,10 +215,10 @@ const getData = async() => {
               style={[
                 styles.searchForm,
                 {
-                  marginTop: 10,
+                  // marginTop: 10,
                   backgroundColor: colors.background,
                   borderColor: colors.border,
-                  shadowColor: colors.border,
+                  //   shadowColor: colors.border,
                 },
               ]}>
               <TouchableOpacity
@@ -200,7 +227,7 @@ const getData = async() => {
                 <View
                   style={[BaseStyle.textInput, {backgroundColor: colors.card}]}>
                   <Text body1 grayColor>
-                    {t('what_are_you_looking_for')}
+                    {'Search'}
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -210,10 +237,10 @@ const getData = async() => {
           {/* Hiking */}
           <View style={styles.titleView}>
             <Text title3 semibold>
-            Today's Deals
+              Today's Deals
             </Text>
             <Text body2 grayColor>
-            A compiled list of discounted Hotels in Nigeria
+              A compiled list of discounted Hotels in Nigeria
             </Text>
           </View>
           <FlatList
@@ -222,36 +249,75 @@ const getData = async() => {
             showsHorizontalScrollIndicator={false}
             data={hotels}
             keyExtractor={(item, index) => item.id}
-            renderItem={({item, index}) => (
-              <HotelItem
-                grid={true}
-                image={item.images[0].url}
-                name={item.name}
-                location={item.location.substring(0,1).toUpperCase()+item.location.substring(1,item.location.length)+',Nigeria'}
-                price={item.price}
-                available={item.available}
-                rate={item.rate}
-                rateStatus={item.rateStatus}
-                numReviews={item.numReviews}
-                services={item.features}
-                style={{marginLeft: 15, width:150,marginBottom:30}}
-                onPress={() => navigation.navigate('HotelDetail',{item})}
-              />
-            )}
-          /> 
-          <View style={[styles.titleView,{marginTop:-10}]}>
-          <View style={{flexDirection:'row',
-            alignItems:'center',justifyContent:'space-between'}}><Text title3 semibold>
-              {'Hot Events'}
-            </Text>
-            <TouchableOpacity onPress={()=>navigation.navigate('HotelList')}><Text body2 grayColor>
-              view all
-            </Text></TouchableOpacity></View>
+            renderItem={({item, index}) => {
+              if (item.featured) {
+                return (
+                  <View style={{flexDirection: 'column'}}>
+                    <View
+                      style={{
+                        backgroundColor: '#00A651',
+                        paddingVertical: 5,
+                        paddingHorizontal: 5,
+                        width: 70,
+                        left: 10,
+                        top: 28,
+                        zIndex: 2,
+                      }}>
+                      <Text style={{color: 'white', fontSize: 14}}>
+                        {parseInt(item.rooms[0].discount_rate) + '% off'}
+                      </Text>
+                    </View>
+
+                    <HotelItem
+                      grid={true}
+                      image={item.images[0].url}
+                      name={item.name}
+                      location={
+                        item.location.substring(0, 1).toUpperCase() +
+                        item.location.substring(1, item.location.length) +
+                        ',Nigeria'
+                      }
+                      price={
+                        '\u20a6' +
+                        parseInt(item.rooms[0].price)
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      }
+                      available={item.available}
+                      rate={item.rate}
+                      rateStatus={item.rateStatus}
+                      numReviews={item.numReviews}
+                      services={item.features}
+                      style={{marginLeft: 15, width: 150, marginBottom: 30}}
+                      onPress={() => navigation.navigate('HotelDetail', {item})}
+                    />
+                  </View>
+                );
+              }
+            }}
+          />
+          <View style={[styles.titleView, {marginTop: -10}]}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <Text title3 semibold>
+                {'Hot Events'}
+              </Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('HotelList')}>
+                <Text body2 grayColor>
+                  view all
+                </Text>
+              </TouchableOpacity>
+            </View>
             <Text body2 grayColor>
-            Buy Tickets to top events around you
+              Buy Tickets to top events around you
             </Text>
           </View>
-          
+
           <View>
             <FlatList
               contentContainerStyle={{
@@ -268,23 +334,32 @@ const getData = async() => {
                   title={item.name}
                   time={item.start_date}
                   location={item.location}
-                  onPress={() => navigation.navigate('EventDetail',{item})}
-                  style={{marginLeft: 15,width:150}}
+                  onPress={() => navigation.navigate('EventDetail', {item})}
+                  style={{marginLeft: 15, width: 150}}
                 />
               )}
             />
           </View>
-         
+
           <View style={styles.titleView}>
-          <View style={{flexDirection:'row',
-            alignItems:'center',justifyContent:'space-between'}}><Text title3 semibold>
-              {'Tours'}
-            </Text>
-            <TouchableOpacity onPress={()=>navigation.navigate('HotelList')}><Text body2 grayColor>
-              view all
-            </Text></TouchableOpacity></View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <Text title3 semibold>
+                {'Tours'}
+              </Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('HotelList')}>
+                <Text body2 grayColor>
+                  view all
+                </Text>
+              </TouchableOpacity>
+            </View>
             <Text body2 grayColor>
-            Explore Nigeria, book a tour today!
+              Explore Nigeria, book a tour today!
             </Text>
           </View>
           <FlatList
@@ -298,15 +373,19 @@ const getData = async() => {
                 grid={true}
                 image={item.images[0].url}
                 name={item.name}
-                location={item.location.substring(0,1).toUpperCase()+item.location.substring(1,item.location.length)+',Nigeria'}
+                location={
+                  item.location.substring(0, 1).toUpperCase() +
+                  item.location.substring(1, item.location.length) +
+                  ',Nigeria'
+                }
                 price={''}
                 available={item.available}
                 rate={item.rate}
                 rateStatus={item.rateStatus}
                 numReviews={item.numReviews}
                 services={item.features}
-                style={{marginLeft: 15, width:150,marginBottom:15}}
-                onPress={() => navigation.navigate('HotelDetail',{item})}
+                style={{marginLeft: 15, width: 150, marginBottom: 15}}
+                onPress={() => navigation.navigate('HotelDetail', {item})}
               />
             )}
           />
@@ -347,16 +426,25 @@ const getData = async() => {
               )}
             />
           </View> */}
-        
+
           {/* Promotion */}
           <View style={styles.titleView}>
-            <View style={{flexDirection:'row',
-            alignItems:'center',justifyContent:'space-between'}}><Text title3 semibold>
-              {'All Hotels'}
-            </Text>
-            <TouchableOpacity onPress={()=>navigation.navigate('HotelList')}><Text body2 grayColor>
-              view all
-            </Text></TouchableOpacity></View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <Text title3 semibold>
+                {'All Hotels'}
+              </Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('HotelList')}>
+                <Text body2 grayColor>
+                  view all
+                </Text>
+              </TouchableOpacity>
+            </View>
             <Text body2 grayColor>
               {/* {t('let_find_promotion')} */}
             </Text>
@@ -374,27 +462,27 @@ const getData = async() => {
                 image={item.images[0].url}
                 name={item.name}
                 location={item.address}
-                price={'\u20a6'+item.rooms &&
-              item.rooms[0] &&
-              item.rooms[0].price
-                .toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")||''}
+                price={
+                  '\u20a6' +
+                    parseInt(item.rooms[0].price)
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ',') || ''
+                }
                 available={item.available}
                 rate={item.rate}
                 rateStatus={item.rateStatus}
                 numReviews={item.numReviews}
                 services={item.features}
                 style={{marginLeft: 15, marginBottom: 15}}
-                onPress={() => navigation.navigate('HotelDetail',{item})}
+                onPress={() => navigation.navigate('HotelDetail', {item})}
               />
             )}
-          /> 
-           <View style={[styles.titleView, {marginTop:-20}]}>
+          />
+          <View style={[styles.titleView, {marginTop: -20}]}>
             <Image source={Images.banner1} style={styles.promotionBanner} />
             <View style={[styles.line, {backgroundColor: colors.border}]} />
           </View>
         </ScrollView>
-      
       </SafeAreaView>
     </View>
   );

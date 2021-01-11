@@ -20,9 +20,10 @@ export default function Rental({navigation}) {
   const {colors} = useTheme();
   const {t} = useTranslation();
 
-  const [modeView, setModeView] = useState('block');
+  const [modeView, setModeView] = useState('grid');
   const [rentals, setRentals] = useState([]);
-  const [load, setLoad] = useState(false);
+  const [error, setError] = useState('')
+  const [load, setLoad] = useState(false)
   const [refreshing] = useState(false);
   const scrollAnim = new Animated.Value(0);
   const offsetAnim = new Animated.Value(0);
@@ -40,24 +41,21 @@ export default function Rental({navigation}) {
   );
 
   useEffect(() => {
-    getData();
-  }, []);
+  getData()
+}, []);
 
-  const getData = async () => {
-    setLoad(true);
-    await axios
-      .get(BASE_URL + 'rentals')
-      .then((res) => {
-        // console.log(res.data.rows)
-        setLoad(false);
-        setRentals(res.data.rows);
-      })
-      .catch((err) => {
-        console.log(err);
-        //   setError(err.message);
-        setLoad(false);
-      });
-  };
+const getData = async()=>{
+     setLoad(true)
+    await axios.get(BASE_URL+'rentals')
+        .then(res => {
+          console.log(res.data.rows)
+          setRentals(res.data.rows);
+        })
+        .catch(err => {
+          console.log(err)
+           setError(err.message);
+        }).finally(()=>setLoad(false)) 
+}
   const onChangeSort = () => {};
 
   /**
@@ -385,6 +383,8 @@ export default function Rental({navigation}) {
         );
     }
   };
+
+
 
   return (
     <SafeAreaView style={BaseStyle.safeAreaView} forceInset={{top: 'always'}}>

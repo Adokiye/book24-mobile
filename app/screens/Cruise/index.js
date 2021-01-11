@@ -1,11 +1,12 @@
-import React, {useState} from 'react';
+import React, {useState,useEffect} from 'react';
 import {FlatList, RefreshControl, View, Animated} from 'react-native';
-import {BaseStyle, useTheme} from '@config';
+import {BaseStyle, useTheme,BASE_URL} from '@config';
 import {Header, SafeAreaView, Icon, CruiseItem, FilterSort} from '@components';
 import styles from './styles';
 import * as Utils from '@utils';
 import {useTranslation} from 'react-i18next';
 import {CruiseData} from '@data';
+import axios from 'axios';
 
 export default function Cruise({navigation}) {
   const {t} = useTranslation();
@@ -14,8 +15,9 @@ export default function Cruise({navigation}) {
   const {colors} = useTheme();
 
   const [refreshing] = useState(false);
-  const [modeView, setModeView] = useState('block');
-  const [cruise] = useState(CruiseData);
+  const [modeView, setModeView] = useState('grid');
+  const [load, setLoad] = useState(false)
+  const [cruise,setCruise] = useState([]);
   const clampedScroll = Animated.diffClamp(
     Animated.add(
       scrollAnim.interpolate({
@@ -28,6 +30,26 @@ export default function Cruise({navigation}) {
     0,
     40,
   );
+
+  useEffect(()=>{
+    getData()
+    },[])
+  
+    const getData = async()=>{
+      setLoad(true)
+      await axios
+      .get(BASE_URL + 'cruise')
+      .then((res) => {
+        // console.log(res.data.rows)
+        setCruise(res.data.rows);
+        //   setLoad(true);
+      })
+      .catch((err) => {
+        console.log(err);
+        //   setError(err.message);
+        //    setLoad(true)
+      }).finally(()=>setLoad(false));
+    }
 
   /**
    * call when change sort
@@ -113,11 +135,14 @@ export default function Cruise({navigation}) {
               renderItem={({item, index}) => (
                 <CruiseItem
                   block
-                  image={item.image}
+                  image={item.images[0].url}
+
                   brand={item.brand}
                   name={item.name}
-                  location={item.location}
-                  price={item.price}
+                  location={item.address}
+                  price={
+                    '\u20a6' +parseInt(item.price)||null
+                  }
                   saleOff={item.saleOff}
                   rate={item.rate}
                   rateStatus={item.rateStatus}
@@ -183,19 +208,23 @@ export default function Cruise({navigation}) {
               renderItem={({item, index}) => (
                 <CruiseItem
                   grid
-                  image={item.image}
-                  brand={item.brand}
-                  name={item.name}
-                  location={item.location}
-                  price={item.price}
-                  saleOff={item.saleOff}
-                  rate={item.rate}
-                  rateStatus={item.rateStatus}
-                  numReviews={item.numReviews}
-                  rateCount={item.rateCount}
-                  time={item.time}
-                  itinerary={item.itinerary}
-                  onPress={() => navigation.navigate('CruiseDetail')}
+                  image={item.images[0].url}
+
+brand={item.brand}
+name={item.name}
+location={item.address}
+price={
+  '\u20a6' +parseInt(item.price)||null
+}
+saleOff={item.saleOff}
+rate={item.rate}
+rateStatus={item.rateStatus}
+numReviews={item.numReviews}
+rateCount={item.rateCount}
+time={item.time}
+itinerary={item.itinerary}
+onPress={() => navigation.navigate('CruiseDetail')}
+onPressTag={() => navigation.navigate('Review')}
                   style={{
                     marginBottom: 10,
                     marginLeft: 15,
@@ -253,18 +282,22 @@ export default function Cruise({navigation}) {
               renderItem={({item, index}) => (
                 <CruiseItem
                   list
-                  image={item.image}
-                  brand={item.brand}
-                  name={item.name}
-                  location={item.location}
-                  price={item.price}
-                  saleOff={item.saleOff}
-                  rate={item.rate}
-                  rateStatus={item.rateStatus}
-                  numReviews={item.numReviews}
-                  rateCount={item.rateCount}
-                  time={item.time}
-                  itinerary={item.itinerary}
+                  image={item.images[0].url}
+
+brand={item.brand}
+name={item.name}
+location={item.address}
+price={
+  '\u20a6' +parseInt(item.price)||null
+}
+saleOff={item.saleOff}
+rate={item.rate}
+rateStatus={item.rateStatus}
+numReviews={item.numReviews}
+rateCount={item.rateCount}
+time={item.time}
+itinerary={item.itinerary}
+onPressTag={() => navigation.navigate('Review')}
                   style={{
                     marginBottom: 20,
                   }}
@@ -360,8 +393,8 @@ export default function Cruise({navigation}) {
   return (
     <SafeAreaView style={BaseStyle.safeAreaView} forceInset={{top: 'always'}}>
       <Header
-        title={t('cruise')}
-        subTitle="01 Aug 2019, 4 Days 5 Nights"
+        title={t('Cruise')}
+       // subTitle="01 Aug 2019, 4 Days 5 Nights"
         renderLeft={() => {
           return (
             <Icon
