@@ -1,5 +1,5 @@
-import React,{useState} from 'react';
-import {View, ScrollView, TouchableOpacity,TextInput} from 'react-native';
+import React, {useState} from 'react';
+import {View, ScrollView, TouchableOpacity, TextInput} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {BaseStyle, BaseColor, useTheme} from '@config';
 import {Header, SafeAreaView, Icon, Text, Button} from '@components';
@@ -7,7 +7,7 @@ import styles from './styles';
 import moment from 'moment';
 import {useTranslation} from 'react-i18next';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import { connect, useDispatch } from "react-redux";
+import {connect, useDispatch} from 'react-redux';
 import {
   setOrderUrl,
   setOrderData,
@@ -18,19 +18,19 @@ import {
   setOrderName,
   setOrderSubData,
   setOrderSubName,
-} from "../../actions/order";
+} from '../../actions/order';
 
-const PreviewBooking =({navigation,route,order})=> {
+const PreviewBooking = ({navigation, route, order}) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isDatePickerVisible_, setDatePickerVisibility_] = useState(false);
-  const {item,parentData} = route
+  const {item, parentData} = route;
   const {t} = useTranslation();
   const dispatch = useDispatch();
   const {colors} = useTheme();
-  const [adultNo, setAdultNo] = useState('')
-  const [childrenNo, setChildrenNo] = useState('')
-  const [checkInDate, setCheckInDate] = useState(new Date())
-  const [checkOutDate, setCheckOutDate] = useState(new Date())
+  const [adultNo, setAdultNo] = useState('');
+  const [childrenNo, setChildrenNo] = useState('');
+  const [checkInDate, setCheckInDate] = useState(new Date());
+  const [checkOutDate, setCheckOutDate] = useState(new Date());
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -46,7 +46,7 @@ const PreviewBooking =({navigation,route,order})=> {
     hideDatePicker();
   };
 
-    const showDatePicker_ = () => {
+  const showDatePicker_ = () => {
     setDatePickerVisibility_(true);
   };
 
@@ -61,30 +61,36 @@ const PreviewBooking =({navigation,route,order})=> {
   };
   let a = moment(checkInDate);
   let b = moment(checkOutDate);
-  let no_of_days = Math.abs(a.diff(b, 'days'))||1;
+  let no_of_days = Math.abs(a.diff(b, 'days')) || 1;
 
   const book = async () => {
-    let token = await AsyncStorage.getItem('token')
-    if (token == null ||token == "") {
-      return navigation.navigate("SignIn")
-    }  else {
-      let new_data = order.data
-      new_data.check_in_date = checkInDate
-      new_data.check_out_date = checkOutDate
-      new_data.no_of_adults = adultNo
-      new_data.no_of_children = childrenNo
-      dispatch(setOrderData(new_data))
-      dispatch(setOrderCheckInDate(moment(checkInDate).format('MMMM DDDD YYYY HH:mm:ss')))
-      dispatch(setOrderCheckOutDate(moment(checkOutDate).format('MMMM DDDD YYYY HH:mm:ss')))
-      return navigation.navigate("CheckOut");
-    }
+    let token = await AsyncStorage.getItem('token');
+    let new_data = order.data;
+    new_data.check_in_date = checkInDate;
+    new_data.check_out_date = checkOutDate;
+    new_data.no_of_adults = adultNo;
+    new_data.no_of_children = childrenNo;
+    dispatch(setOrderData(new_data));
+    dispatch(
+      setOrderCheckInDate(
+        moment(checkInDate).format('MMMM DDDD YYYY HH:mm:ss'),
+      ),
+    );
+    dispatch(
+      setOrderCheckOutDate(
+        moment(checkOutDate).format('MMMM DDDD YYYY HH:mm:ss'),
+      ),
+    );
+    return token == null || token == ''
+      ? navigation.navigate('CheckOutNoAuth')
+      : navigation.navigate('CheckOut');
   };
 
   return (
     <SafeAreaView style={BaseStyle.safeAreaView} forceInset={{top: 'always'}}>
       <Header
         title={t('preview_booking')}
-       // subTitle="Booking Number GAX02"
+        // subTitle="Booking Number GAX02"
         renderLeft={() => {
           return (
             <Icon
@@ -101,12 +107,12 @@ const PreviewBooking =({navigation,route,order})=> {
       />
       <ScrollView>
         <View style={{paddingHorizontal: 20}}>
-        <Text headline>{'No of Adults'}</Text>
+          <Text headline>{'No of Adults'}</Text>
           <TextInput
             style={{marginTop: 10}}
             onChangeText={(text) => setAdultNo(text)}
             placeholder={'Enter number of adults'}
-         //   success={success.card}
+            //   success={success.card}
             keyboardType="numeric"
             value={adultNo}
           />
@@ -115,7 +121,7 @@ const PreviewBooking =({navigation,route,order})=> {
             style={{marginTop: 10}}
             onChangeText={(text) => setChildrenNo(text)}
             placeholder={'Enter number of children'}
-         //   success={success.card}
+            //   success={success.card}
             keyboardType="numeric"
             value={childrenNo}
           />
@@ -132,42 +138,43 @@ const PreviewBooking =({navigation,route,order})=> {
               <View style={{flex: 1}}>
                 <Text body2>{t('check_in')}</Text>
               </View>
-              <TouchableOpacity style={{flex: 1, alignItems: 'flex-end'}}
-              onPress={showDatePicker}>
+              <TouchableOpacity
+                style={{flex: 1, alignItems: 'flex-end'}}
+                onPress={showDatePicker}>
                 <Text body2 semibold>
                   {t('check_in')}
                 </Text>
                 <Text caption1 grayColor>
-                {moment(checkInDate).format('MMMM Do YYYY HH:mm:ss')}
-
+                  {moment(checkInDate).format('MMMM Do YYYY HH:mm:ss')}
                 </Text>
               </TouchableOpacity>
               <DateTimePickerModal
-          isVisible={isDatePickerVisible}
-          mode="datetime"
-          onConfirm={handleConfirm}
-          onCancel={hideDatePicker}
-        />
+                isVisible={isDatePickerVisible}
+                mode="datetime"
+                onConfirm={handleConfirm}
+                onCancel={hideDatePicker}
+              />
             </View>
             <View style={{flexDirection: 'row', marginTop: 10}}>
               <View style={{flex: 1}}>
                 <Text body2>{t('check_out')}</Text>
               </View>
-              <TouchableOpacity style={{flex: 1, alignItems: 'flex-end'}}
-              onPress={showDatePicker_}>
+              <TouchableOpacity
+                style={{flex: 1, alignItems: 'flex-end'}}
+                onPress={showDatePicker_}>
                 <Text body2 semibold>
                   {t('check_out')}
                 </Text>
                 <Text caption1 grayColor>
-                {moment(checkOutDate).format('MMMM Do YYYY HH:mm:ss')}
+                  {moment(checkOutDate).format('MMMM Do YYYY HH:mm:ss')}
                 </Text>
               </TouchableOpacity>
               <DateTimePickerModal
-          isVisible={isDatePickerVisible_}
-          mode="datetime"
-          onConfirm={handleConfirm_}
-          onCancel={hideDatePicker_}
-        />
+                isVisible={isDatePickerVisible_}
+                mode="datetime"
+                onConfirm={handleConfirm_}
+                onCancel={hideDatePicker_}
+              />
             </View>
             <View style={{flexDirection: 'row', marginTop: 10}}>
               <View style={{flex: 1}}>
@@ -228,19 +235,18 @@ const PreviewBooking =({navigation,route,order})=> {
             {no_of_days} {t('day')} / 1 {t('night')}
           </Text>
           <Text title3 primaryColor semibold>
-            {'\u20a6'}{order.price}
+            {'\u20a6'}
+            {order.price}
           </Text>
           <Text caption1 semibold grayColor style={{marginTop: 5}}>
             {adultNo} {t('adults')} / {childrenNo} {t('children')}
           </Text>
         </View>
-        <Button onPress={() => book()}>
-          {t('continue')}
-        </Button>
+        <Button onPress={() => book()}>{t('continue')}</Button>
       </View>
     </SafeAreaView>
   );
-}
+};
 const mapStateToProps = (state) => ({
   order: state.order,
 });

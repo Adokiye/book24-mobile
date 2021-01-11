@@ -422,7 +422,7 @@ export default function Rental({navigation}) {
           navigation.goBack();
         }}
         onPressRight={() => {
-          // navigation.navigate('SearchHistory');
+           navigation.navigate('SearchRental');
         }}
       />
       {load ? (

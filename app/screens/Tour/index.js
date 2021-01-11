@@ -319,7 +319,7 @@ export default function Tour({navigation}) {
                     marginBottom: 20,
                   }}
                   onPress={() => {
-                    navigation.navigate('TourDetail',item);
+                    navigation.navigate('TourDetail',{item});
                   }}
                   onPressBookNow={() => {
                     navigation.navigate('PreviewBooking');
@@ -442,10 +442,11 @@ export default function Tour({navigation}) {
           navigation.goBack();
         }}
         onPressRight={() => {
-          navigation.navigate('SearchHistory');
+          navigation.navigate('SearchTour');
         }}
       />
       {renderContent()}
     </SafeAreaView>
   );
 }
+

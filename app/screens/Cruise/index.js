@@ -417,7 +417,7 @@ onPressTag={() => navigation.navigate('Review')}
           navigation.goBack();
         }}
         onPressRight={() => {
-          navigation.navigate('SearchHistory');
+          navigation.navigate('SearchCruise');
         }}
       />
       {renderContent()}

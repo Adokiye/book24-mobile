@@ -19,7 +19,7 @@ import {
 import {EventListData} from '@data';
 import {useTranslation} from 'react-i18next';
 import styles from './styles';
-import axios from 'axios'
+import axios from 'axios';
 
 export default function DashboardEvent({navigation}) {
   const {colors} = useTheme();
@@ -27,27 +27,29 @@ export default function DashboardEvent({navigation}) {
 
   const [search, setSearch] = useState('');
   const [loading] = useState(false);
-  const [load, setLoad] = useState(false)
+  const [load, setLoad] = useState(false);
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    setLoad(true)
-    axios.get(BASE_URL+'events')
-        .then(res => {
-          // console.log(res.data.rows)
-            setEvents(res.data.rows);
-        })
-        .catch(err => {
-          console.log(err)
-         //   setError(err.message);
-        }).finally(()=>setLoad(false))
-}, []);
+    setLoad(true);
+    axios
+      .get(BASE_URL + 'events')
+      .then((res) => {
+        // console.log(res.data.rows)
+        setEvents(res.data.rows);
+      })
+      .catch((err) => {
+        console.log(err);
+        //   setError(err.message);
+      })
+      .finally(() => setLoad(false));
+  }, []);
 
   /**
    * onSearch change
    * @param {*} keyword
    */
-  const onSearch = keyword => {};
+  const onSearch = (keyword) => {};
 
   return (
     <SafeAreaView style={BaseStyle.safeAreaView} forceInset={{top: 'always'}}>
@@ -74,23 +76,29 @@ export default function DashboardEvent({navigation}) {
       />
       <ScrollView>
         <View style={{padding: 20}}>
-          <TextInput
-            onChangeText={text => setSearch(text)}
-            placeholder={t('search')}
-            value={search}
-            onSubmitEditing={() => {
-              onSearch(search);
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('SearchEvent');
             }}
-            icon={
-              <TouchableOpacity
-                onPress={() => {
-                  setSearch('');
-                }}
-                style={styles.btnClearSearch}>
-                <Icon name="times" size={18} color={BaseColor.grayColor} />
-              </TouchableOpacity>
-            }
-          />
+            style={styles.btnClearSearch}>
+            <TextInput
+              onChangeText={(text) => setSearch(text)}
+              placeholder={t('search')}
+              value={search}
+              onSubmitEditing={() => {
+                onSearch(search);
+              }}
+              icon={
+                <TouchableOpacity
+                  onPress={() => {
+                    setSearch('');
+                  }}
+                  style={styles.btnClearSearch}>
+                  <Icon name="times" size={18} color={BaseColor.grayColor} />
+                </TouchableOpacity>
+              }
+            />
+          </TouchableOpacity>
         </View>
         <Text title3 semibold style={{padding: 20}}>
           {'Upcoming Events'}
@@ -101,20 +109,20 @@ export default function DashboardEvent({navigation}) {
               paddingRight: 20,
               paddingLeft: 5,
             }}
-           // horizontal={true}
+            // horizontal={true}
             data={events}
             numColumns={2}
             showsHorizontalScrollIndicator={false}
             keyExtractor={(item, index) => item.id}
             renderItem={({item, index}) => (
               <EventCard
-                  image={item.images[0].url}
-                  title={item.name}
-                  time={item.start_date}
-                  location={item.location}
-                  onPress={() => navigation.navigate('EventDetail',{item})}
-                  style={{marginLeft: 15,width:'45%',marginBottom:10}}
-                />
+                image={item.images[0].url}
+                title={item.name}
+                time={item.start_date}
+                location={item.location}
+                onPress={() => navigation.navigate('EventDetail', {item})}
+                style={{marginLeft: 15, width: '45%', marginBottom: 10}}
+              />
             )}
           />
         </View>

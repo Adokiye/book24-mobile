@@ -8,7 +8,7 @@ import {
   Animated,
   RefreshControl,
 } from 'react-native';
-import {BaseStyle, BaseColor, useTheme, BASE_URL} from '@config';
+import {BaseStyle, BaseColor, useTheme, BASE_URL} from '../SearchTour/node_modules/@config';
 import {
   Header,
   SafeAreaView,
@@ -19,7 +19,7 @@ import {
   TextInput,
   FilterSort,
   HotelItem,
-} from '@components';
+} from '../SearchTour/node_modules/@components';
 import Modal from 'react-native-modal';
 import styles from './styles';
 import {useTranslation} from 'react-i18next';
@@ -563,7 +563,7 @@ export default function Search({navigation}) {
                   numReviews={item.numReviews}
                   services={item.features}
                   hotel_type={item.hotel_type}
-                  onPress={() => navigation.navigate('TourDetail', {item})}
+                  onPress={() => navigation.navigate('ActivityDetail', {item})}
                   style={{
                     marginBottom: 15,
                     marginLeft: 15,

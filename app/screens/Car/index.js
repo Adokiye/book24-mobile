@@ -442,7 +442,7 @@ export default function Car({navigation}) {
           navigation.goBack();
         }}
         onPressRight={() => {
-          navigation.navigate('SearchHistory');
+          navigation.navigate('SearchCar');
         }}
       />
       {renderContent()}

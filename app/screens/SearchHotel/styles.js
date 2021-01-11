@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { BaseColor } from "../SearchTour/node_modules/@config";
+import { BaseColor } from "../SearchEvent/node_modules/@config";
 
 export default StyleSheet.create({
   contentPickDate: {

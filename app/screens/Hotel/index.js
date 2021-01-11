@@ -142,7 +142,7 @@ export default function Hotel({navigation}) {
                   style={{
                     paddingBottom: 10,
                   }}
-                  onPress={() => navigation.navigate('HotelDetail', {item})}
+                  onPress={() => navigation.navigate('HotelDetail', {item,hotels})}
                   onPressTag={() => navigation.navigate('Review')}
                 />
               )}
@@ -210,7 +210,7 @@ export default function Hotel({navigation}) {
                   numReviews={item.numReviews}
                   services={item.features}
                   hotel_type={item.hotel_type}
-                  onPress={() => navigation.navigate('HotelDetail', {item})}
+                  onPress={() => navigation.navigate('HotelDetail', {item,hotels})}
                   style={{
                     marginBottom: 15,
                     marginLeft: 15,
@@ -281,7 +281,7 @@ export default function Hotel({navigation}) {
                   style={{
                     paddingBottom: 10,
                   }}
-                  onPress={() => navigation.navigate('HotelDetail', {item})}
+                  onPress={() => navigation.navigate('HotelDetail', {item,hotels})}
                   onPressTag={() => navigation.navigate('Review')}
                 />
               )}
@@ -349,7 +349,7 @@ export default function Hotel({navigation}) {
                   style={{
                     marginBottom: 10,
                   }}
-                  onPress={() => navigation.navigate('HotelDetail', {item})}
+                  onPress={() => navigation.navigate('HotelDetail', {item,hotels})}
                   onPressTag={() => navigation.navigate('Preview')}
                 />
               )}
@@ -409,7 +409,7 @@ export default function Hotel({navigation}) {
           navigation.goBack();
         }}
         onPressRight={() => {
-          // navigation.navigate('SearchHistory');
+          navigation.navigate('SearchHotel');
         }}
       />
       {load ? (

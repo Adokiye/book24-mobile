@@ -17,12 +17,26 @@ import {
 import styles from './styles';
 import {useTranslation} from 'react-i18next';
 import {UserData} from '@data';
+import AsyncStorage from '@react-native-community/async-storage';
+import {connect, useDispatch} from 'react-redux';
+import {
+  setOrderUrl,
+  setOrderData,
+  setOrderPrice,
+  setOrderCheckInDate,
+  setOrderCheckOutDate,
+  setOrderImage,
+  setOrderName,
+  setOrderSubData,
+  setOrderSubName,
+} from '../../actions/order';
 
-export default function HotelInformation({navigation,route}) {
-  const {params} = route
-  const {item,features,bio,hotelData} = params
+export default function HotelInformation({navigation, route}) {
+  const {params} = route;
+  const {item, features, bio, hotelData} = params;
   const {colors} = useTheme();
   const {t} = useTranslation();
+  const dispatch = useDispatch();
 
   const [userData] = useState(UserData[0]);
   const [service] = useState([
@@ -37,6 +51,40 @@ export default function HotelInformation({navigation,route}) {
     {id: '9', name: 'tv'},
     {id: '10', name: 'futbol'},
   ]);
+
+  const book = async () => {
+    let token = (await AsyncStorage.getItem('token')) ?? '';
+    if (token == null || token == '') {
+      return navigation.navigate('Walkthrough');
+    } else {
+      const new_data = {
+        room_type_id: item.id,
+        price: parseInt(item.price),
+        // check_in_date: book_in_date,
+        // check_out_date: book_out_date,
+        hotel_id: parseInt(item.id),
+        // no_of_adults: no_of_adults,
+        // no_of_children: no_of_children,
+      };
+      dispatch(setOrderData(new_data));
+      dispatch(setOrderUrl('hotelBooking'));
+      dispatch(setOrderPrice(parseInt(item.price)));
+      dispatch(
+        setOrderImage(item.images && item.images[0] && item.images[0].url),
+      );
+      // this.props.setOrderCheckInDate(moment(book_in_date).format('MMMM DDDD YYYY HH:mm:ss'))
+      // this.props.setOrderCheckOutDate(moment(book_out_date).format('MMMM DDDD YYYY HH:mm:ss'))
+      dispatch(setOrderName(item.name));
+      // this.props.setOrderSubData(
+      //   {
+      //     'No of adults':no_of_adults,
+      //     'No of children': no_of_children,
+      //   }
+      // )
+      //  this.props.setOrderSubName(item.name)
+      return navigation.navigate('PreviewBooking');
+    }
+  };
 
   return (
     <SafeAreaView style={BaseStyle.safeAreaView} forceInset={{top: 'always'}}>
@@ -65,16 +113,14 @@ export default function HotelInformation({navigation,route}) {
           }}
           activeOpacity={0.9}>
           <View style={styles.galleryLineTop}>
-          {
-            item.images.map((el,index)=>
+            {item.images.map((el, index) => (
               <View style={{flex: 1, paddingRight: 5}}>
-              <Image
-                source={{uri:el.url}}
-                style={{width: '100%', height: '100%'}}
-              />
-            </View> 
-            )
-          }
+                <Image
+                  source={{uri: el.url}}
+                  style={{width: '100%', height: '100%'}}
+                />
+              </View>
+            ))}
             {/* <View style={{flex: 1, paddingRight: 5}}>
               <Image
                 source={Images.room1}
@@ -135,7 +181,7 @@ export default function HotelInformation({navigation,route}) {
               starSize={14}
               maxStars={5}
               rating={4.7}
-              selectedStar={rating => {}}
+              selectedStar={(rating) => {}}
               fullStarColor={BaseColor.yellowColor}
             />
           </View>
@@ -246,15 +292,14 @@ export default function HotelInformation({navigation,route}) {
             {t('price')}
           </Text>
           <Text title3 primaryColor semibold>
-            {'\u20a6'}{item.price}
+            {'\u20a6'}
+            {item.price}
           </Text>
           <Text caption1 semibold style={{marginTop: 5}}>
             {t('avg_night')}
           </Text>
         </View>
-        <Button onPress={() => navigation.navigate('PreviewBooking',{item,parent:hotelData})}>
-          {t('book_now')}
-        </Button>
+        <Button onPress={() => book()}>{t('book_now')}</Button>
       </View>
     </SafeAreaView>
   );

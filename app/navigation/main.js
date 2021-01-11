@@ -15,6 +15,13 @@ import Profile5 from '@screens/Profile5';
 import Profile6 from '@screens/Profile6';
 import Profile7 from '@screens/Profile7';
 import Profile8 from '@screens/Profile8';
+import SearchHotel from '@screens/SearchHotel';
+import SearchEvent from '@screens/SearchEvent';
+import SearchTour from '@screens/SearchTour';
+import SearchCruise from '@screens/SearchCruise';
+import SearchActivity from '@screens/SearchActivity';
+import SearchRental from '@screens/SearchRental';
+import SearchCar from '@screens/SearchCar';
 import More from '@screens/More';
 import Tour from '@screens/Tour';
 import Car from '@screens/Car';
@@ -79,6 +86,7 @@ import ThemeSetting from '@screens/ThemeSetting';
 import NotFound from '@screens/NotFound';
 /* Bottom Screen */
 import Home from '@screens/Home';
+import CheckOutNoAuth from '@screens/CheckOutNoAuth';
 import Booking from '@screens/Booking';
 import Messenger from '@screens/Messenger';
 import Post from '@screens/Post';
@@ -96,6 +104,7 @@ export default function Main() {
         name="BottomTabNavigator"
         component={BottomTabNavigator}
       />
+      <MainStack.Screen name="CheckOutNoAuth" component={CheckOutNoAuth} />
       <MainStack.Screen name="Profile1" component={Profile1} />
       <MainStack.Screen name="Profile2" component={Profile2} />
       <MainStack.Screen name="Profile3" component={Profile3} />
@@ -112,7 +121,13 @@ export default function Main() {
       <MainStack.Screen name="Rental" component={Rental} />
       <MainStack.Screen name="RentalDetail" component={RentalDetail} />
       <MainStack.Screen name="ActivityDetail" component={ActivityDetail} />
-
+      <MainStack.Screen name="SearchHotel" component={SearchHotel} />
+      <MainStack.Screen name="SearchCar" component={SearchCar} />
+      <MainStack.Screen name="SearchTour" component={SearchTour} />
+      <MainStack.Screen name="SearchRental" component={SearchRental} />
+      <MainStack.Screen name="SearchCruise" component={SearchCruise} />
+      <MainStack.Screen name="SearchEvent" component={SearchEvent} />
+      <MainStack.Screen name="SearchActivity" component={SearchActivity} />
       <MainStack.Screen name="Review" component={Review} />
       <MainStack.Screen name="Feedback" component={Feedback} />
       <MainStack.Screen name="Messages" component={Messages} />
@@ -184,7 +199,7 @@ function BottomTabNavigator() {
   const {t} = useTranslation();
   const {colors} = useTheme();
   const font = useFont();
-  const auth = useSelector(state => state.auth);
+  const auth = useSelector((state) => state.auth);
   const login = auth.login.success;
   return (
     <BottomTab.Navigator
@@ -213,7 +228,7 @@ function BottomTabNavigator() {
       />
       <BottomTab.Screen
         name="Booking"
-        component={login ?Booking:Walkthrough}
+        component={login ? Booking : Walkthrough}
         options={{
           title: 'BOOKING',
           tabBarIcon: ({color}) => {
@@ -231,7 +246,7 @@ function BottomTabNavigator() {
           },
         }}
       />
-    {/*   <BottomTab.Screen
+      {/*   <BottomTab.Screen
         name="Post"
         component={Post}
         options={{

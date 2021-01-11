@@ -409,7 +409,7 @@ export default function Activity({navigation}) {
           navigation.goBack();
         }}
         onPressRight={() => {
-          // navigation.navigate('SearchHistory');
+           navigation.navigate('SearchActivity');
         }}
       />
       {load ? (
