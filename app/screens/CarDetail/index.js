@@ -19,7 +19,8 @@ import {useTranslation} from 'react-i18next';
 import styles from './styles';
 import {UserData, HelpBlockData} from '@data';
 
-export default function CarDetail({navigation}) {
+export default function CarDetail({navigation,route}) {
+  const {item} = route.params
   const {colors} = useTheme();
   const {t} = useTranslation();
 
@@ -110,8 +111,8 @@ export default function CarDetail({navigation}) {
   return (
     <SafeAreaView style={BaseStyle.safeAreaView} forceInset={{top: 'always'}}>
       <Header
-        title={t('car_detail')}
-        subTitle="24 Dec 2018"
+        title={t('Car Detail')}
+        subTitle=""
         renderLeft={() => {
           return (
             <Icon
@@ -128,7 +129,7 @@ export default function CarDetail({navigation}) {
         renderRight={() => {
           return (
             <Text headline primaryColor numberOfLines={1}>
-              {t('book')}
+              {t('Book')}
             </Text>
           );
         }}
@@ -139,24 +140,24 @@ export default function CarDetail({navigation}) {
       {renderModalBottom()}
       <ScrollView>
         <View style={styles.wrapper}>
-          <Swiper
+          {/* <Swiper
             dotStyle={{
               backgroundColor: BaseColor.dividerColor,
             }}
             activeDotColor={colors.primary}
             paginationStyle={styles.contentPage}
             removeClippedSubviews={false}>
-            {slide.map((item, index) => {
+            {item.images && JSON.parse(item.images).length>0&&JSON.parse(item.images).map((item, index) => {
               return (
                 <Image
-                  source={item.image}
+                  source={{uri:item.url}}
                   style={styles.img}
                   resizeMode="contain"
                   key={index}
                 />
               );
             })}
-          </Swiper>
+          </Swiper> */}
         </View>
         <View
           style={{
@@ -165,13 +166,12 @@ export default function CarDetail({navigation}) {
             alignItems: 'flex-start',
           }}>
           <Text headline semibold>
-            {t('information')}
+            {t('Description')}
           </Text>
           <Text body2 style={{marginTop: 5}}>
-            218 Austen Mountain, consectetur adipiscing, sed do eiusmod tempor
-            incididunt ut labore et dolore
+            {item.description}
           </Text>
-          <Text headline semibold style={{marginTop: 20}}>
+          {/* <Text headline semibold style={{marginTop: 20}}>
             {t('features')}
           </Text>
           <View style={styles.listContentService}>
@@ -206,10 +206,10 @@ export default function CarDetail({navigation}) {
               solid
               enableRTL={true}
             />
-          </View>
+          </View> */}
         </View>
         <View style={[styles.line, {backgroundColor: colors.border}]} />
-        <ProfileDetail
+        {/* <ProfileDetail
           image={userData.image}
           textFirst={userData.name}
           point={userData.point}
@@ -232,13 +232,13 @@ export default function CarDetail({navigation}) {
             {t('view_profile')}
           </Tag>
         </View>
-        <View style={[styles.line, {backgroundColor: colors.border}]} />
+        <View style={[styles.line, {backgroundColor: colors.border}]} /> */}
         <View style={{paddingHorizontal: 20, marginTop: 10}}>
           <HelpBlock
             title={helpBlock.title}
             description={helpBlock.description}
-            phone={helpBlock.phone}
-            email={helpBlock.email}
+            phone={item.contact_phone}
+            email={item.contact_email}
             style={{margin: 20}}
             onPress={() => {
               navigation.navigate('ContactUs');

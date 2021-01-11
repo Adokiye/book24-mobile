@@ -360,7 +360,12 @@ onPressTag={() => navigation.navigate('Review')}
                   brand={item.brand}
                   name={item.name}
                   location={item.location}
-                  price={item.price}
+                  price={
+                        '\u20a6' +
+                        parseInt(item.price)
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      }
                   saleOff={item.saleOff}
                   rate={item.rate}
                   rateStatus={item.rateStatus}

@@ -69,7 +69,7 @@ export default function FlightSearch({navigation}) {
   return (
     <SafeAreaView style={BaseStyle.safeAreaView} forceInset={{top: 'always'}}>
       <Header
-        title={t('search_flight')}
+        title={t('Flight')}
         renderLeft={() => {
           return (
             <Icon
@@ -86,7 +86,8 @@ export default function FlightSearch({navigation}) {
       />
       <ScrollView contentContainerStyle={styles.contain} style={{flex: 1}}>
         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-          <Text style={{fontSize: 22, textAlign: 'center', color: '#000'}}>
+          <Text style={{fontSize: 28, textAlign: 'center', color: '#000',
+          marginTop:'50%'}}>
             COMING SOON
           </Text>
         </View>

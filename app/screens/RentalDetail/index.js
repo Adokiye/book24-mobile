@@ -308,7 +308,7 @@ export default function RentalDetail({navigation,route}) {
               </Text>
             </View>
             {/* Facilities Icon */}
-            <View
+            {/* <View
               style={[
                 styles.contentService,
                 {borderBottomColor: colors.border},
@@ -321,7 +321,7 @@ export default function RentalDetail({navigation,route}) {
                   </Text>
                 </View>
               ))}
-            </View>
+            </View> */}
             {/* Map location */}
             <View
               style={[styles.blockView, {borderBottomColor: colors.border}]}>
@@ -392,7 +392,7 @@ export default function RentalDetail({navigation,route}) {
               </View>
             </View>
             {/* Rooms */}
-            <View
+            {/* <View
               style={[styles.blockView, {borderBottomColor: colors.border}]}>
               <Text headline semibold>
                 {t('room_type')}
@@ -414,7 +414,7 @@ export default function RentalDetail({navigation,route}) {
                   />
                 )}
               />
-            </View>
+            </View> */}
             {/* Activities */}
             <View
               style={[styles.blockView, {borderBottomColor: colors.border}]}>
@@ -529,17 +529,17 @@ export default function RentalDetail({navigation,route}) {
           style={[styles.contentButtonBottom, {borderTopColor: colors.border}]}>
           <View>
             <Text caption1 semibold>
-              {t('price')}
+              {t('Price')}
             </Text>
             <Text title3 primaryColor semibold>
               {'\u20a6'}{item.price||0}
             </Text>
             <Text caption1 semibold style={{marginTop: 5}}>
-              {t('avg_night')}
+              {''}
             </Text>
           </View>
           <Button onPress={() => navigation.navigate('PreviewBooking',)}>
-            {t('book_now')}
+            {t('Book Now')}
           </Button>
         </View>
       </SafeAreaView>

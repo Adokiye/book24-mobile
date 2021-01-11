@@ -29,7 +29,7 @@ export default function Car({navigation}) {
   );
 
   const [refreshing] = useState(false);
-  const [modeView, setModeView] = useState('block');
+  const [modeView, setModeView] = useState('grid');
   const [cars, setCars] = useState([]);
 
   useEffect(() => {
@@ -144,9 +144,14 @@ export default function Car({navigation}) {
                       ? item.images[0].url
                       : ''
                   }
-                  title={item.title || item.description}
-                  name={item.name}
-                  price={item.price}
+                  title={item.name}
+                  name={item.description}
+                  price={
+                        '\u20a6' +
+                        parseInt(item.price)
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      }
                   per={item.per}
                   rate={item.rate}
                   numReviews={item.numReviews}
@@ -221,7 +226,12 @@ export default function Car({navigation}) {
                   }
                   title={item.title || item.description}
                   name={item.name}
-                  price={item.price}
+                  price={
+                        '\u20a6' +
+                        parseInt(item.price)
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      }
                   per={item.per}
                   rate={item.rate}
                   numReviews={item.numReviews}
@@ -294,7 +304,12 @@ export default function Car({navigation}) {
                   }
                   title={item.title || item.description}
                   name={item.name}
-                  price={item.price}
+                  price={
+                        '\u20a6' +
+                        parseInt(item.price)
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      }
                   per={item.per}
                   rate={item.rate}
                   numReviews={item.numReviews}
@@ -367,7 +382,12 @@ export default function Car({navigation}) {
                   }
                   title={item.title || item.description}
                   name={item.name}
-                  price={item.price}
+                  price={
+                        '\u20a6' +
+                        parseInt(item.price)
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      }
                   per={item.per}
                   rate={item.rate}
                   numReviews={item.numReviews}
@@ -403,8 +423,8 @@ export default function Car({navigation}) {
   return (
     <SafeAreaView style={BaseStyle.safeAreaView} forceInset={{top: 'always'}}>
       <Header
-        title={t('car')}
-        subTitle="24 Dec 2018, 2 Nights, 1 Room"
+        title={t('Car')}
+        subTitle=""
         renderLeft={() => {
           return (
             <Icon

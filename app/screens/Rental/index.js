@@ -1,11 +1,17 @@
 import React, {useState, useEffect} from 'react';
-import {FlatList, RefreshControl, View, Animated} from 'react-native';
+import {
+  FlatList,
+  RefreshControl,
+  View,
+  Animated,
+  ActivityIndicator,
+} from 'react-native';
 import {BaseStyle, useTheme, BASE_URL} from '@config';
 import {
   Header,
   SafeAreaView,
   Icon,
-  RentalItem,
+  HotelItem,
   FilterSort,
   Loader,
 } from '@components';
@@ -22,8 +28,7 @@ export default function Rental({navigation}) {
 
   const [modeView, setModeView] = useState('grid');
   const [rentals, setRentals] = useState([]);
-  const [error, setError] = useState('')
-  const [load, setLoad] = useState(false)
+  const [load, setLoad] = useState(false);
   const [refreshing] = useState(false);
   const scrollAnim = new Animated.Value(0);
   const offsetAnim = new Animated.Value(0);
@@ -40,22 +45,6 @@ export default function Rental({navigation}) {
     40,
   );
 
-  useEffect(() => {
-  getData()
-}, []);
-
-const getData = async()=>{
-     setLoad(true)
-    await axios.get(BASE_URL+'rentals')
-        .then(res => {
-          console.log(res.data.rows)
-          setRentals(res.data.rows);
-        })
-        .catch(err => {
-          console.log(err)
-           setError(err.message);
-        }).finally(()=>setLoad(false)) 
-}
   const onChangeSort = () => {};
 
   /**
@@ -88,7 +77,7 @@ const getData = async()=>{
 
         break;
       default:
-        setModeView('block');
+        setModeView('grid');
         break;
     }
   };
@@ -138,12 +127,17 @@ const getData = async()=>{
               key={'block'}
               keyExtractor={(item, index) => item.id}
               renderItem={({item, index}) => (
-                <RentalItem
+                <HotelItem
                   block
                   image={item.images[0].url}
                   name={item.name}
                   location={item.address}
-                  price={item.price}
+                  price={
+                        '\u20a6' +
+                        parseInt(item.price)
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      }
                   //available={item.available}
                   rate={item.rate}
                   rateStatus={item.rateStatus}
@@ -209,12 +203,17 @@ const getData = async()=>{
               key={'grid'}
               keyExtractor={(item, index) => item.id}
               renderItem={({item, index}) => (
-                <RentalItem
+                <HotelItem
                   grid
                   image={item.images[0].url}
                   name={item.name}
                   location={item.address}
-                  price={item.price}
+                  price={
+                        '\u20a6' +
+                        parseInt(item.price)
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      }
                   //available={item.available}
                   rate={item.rate}
                   rateStatus={item.rateStatus}
@@ -277,12 +276,17 @@ const getData = async()=>{
               key={'list'}
               keyExtractor={(item, index) => item.id}
               renderItem={({item, index}) => (
-                <RentalItem
+                <HotelItem
                   list
                   image={item.images[0].url}
                   name={item.name}
                   location={item.address}
-                  price={item.price}
+                  price={
+                        '\u20a6' +
+                        parseInt(item.price)
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      }
                   //available={item.available}
                   rate={item.rate}
                   rateStatus={item.rateStatus}
@@ -290,12 +294,10 @@ const getData = async()=>{
                   services={item.features}
                   rental_type={item.rental_type}
                   style={{
-                    marginHorizontal: 20,
-                    marginBottom: 15,
+                    paddingBottom: 10,
                   }}
-                  onPress={() => {
-                    navigation.navigate('RentalDetail', {item});
-                  }}
+                  onPress={() => navigation.navigate('RentalDetail', {item})}
+                  onPressTag={() => navigation.navigate('Review')}
                 />
               )}
             />
@@ -344,15 +346,15 @@ const getData = async()=>{
                 {useNativeDriver: true},
               )}
               data={rentals}
-              key={'block'}
+              key={'grid'}
               keyExtractor={(item, index) => item.id}
               renderItem={({item, index}) => (
-                <RentalItem
-                  block
+                <HotelItem
+                  grid
                   image={item.images[0].url}
                   name={item.name}
                   location={item.address}
-                  price={item.price}
+                  price={'h'}
                   //available={item.available}
                   rate={item.rate}
                   rateStatus={item.rateStatus}
@@ -384,7 +386,19 @@ const getData = async()=>{
     }
   };
 
-
+  useEffect(() => {
+    setLoad(true);
+    axios
+      .get(BASE_URL + 'rentals')
+      .then((res) => {
+         console.log(res.data.rows)
+        setRentals(res.data.rows);
+      })
+      .catch((err) => {
+        console.log(err);
+        //   setError(err.message);
+      }).finally(()=>setLoad(false));
+  }, []);
 
   return (
     <SafeAreaView style={BaseStyle.safeAreaView} forceInset={{top: 'always'}}>
@@ -411,7 +425,14 @@ const getData = async()=>{
           // navigation.navigate('SearchHistory');
         }}
       />
-      {renderContent()}
+      {load ? (
+        <View
+          style={{flex: 1, alignIitems: 'center', justifyContent: 'center'}}>
+          <ActivityIndicator size={'large'} color={'#1281dd'} />
+        </View>
+      ) : (
+        renderContent()
+      )}
     </SafeAreaView>
   );
 }

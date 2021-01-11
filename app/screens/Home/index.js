@@ -307,7 +307,7 @@ export default function Home({navigation}) {
                 {'Hot Events'}
               </Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate('HotelList')}>
+                onPress={() => navigation.navigate('DashboardEvent')}>
                 <Text body2 grayColor>
                   view all
                 </Text>
@@ -352,7 +352,7 @@ export default function Home({navigation}) {
                 {'Tours'}
               </Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate('HotelList')}>
+                onPress={() => navigation.navigate('Tour')}>
                 <Text body2 grayColor>
                   view all
                 </Text>
@@ -439,7 +439,7 @@ export default function Home({navigation}) {
                 {'All Hotels'}
               </Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate('HotelList')}>
+                onPress={() => navigation.navigate('Hotel')}>
                 <Text body2 grayColor>
                   view all
                 </Text>

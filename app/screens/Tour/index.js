@@ -137,7 +137,12 @@ export default function Tour({navigation}) {
                   location={item.location}
                   travelTime={item.location}
                   startTime={item.startTime}
-                  price={item.price}
+                  price={
+                        '\u20a6' +
+                        parseInt(item.price)
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      }
                   rate={item.rate}
                   rateCount={item.rateCount}
                   numReviews={item.numReviews}
@@ -215,7 +220,12 @@ export default function Tour({navigation}) {
                   location={item.location}
                   travelTime={item.travelTime}
                   startTime={item.startTime}
-                  price={'\u20a6'+parseInt(item.price)}
+                  price={
+                        '\u20a6' +
+                        parseInt(item.price)
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      }
 
                   rate={item.rate}
                   rateCount={item.rateCount}
@@ -293,7 +303,12 @@ export default function Tour({navigation}) {
                   location={item.location}
                   travelTime={item.travelTime}
                   startTime={item.startTime}
-                  price={'\u20a6'+parseInt(item.price)}
+                  price={
+                        '\u20a6' +
+                        parseInt(item.price)
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      }
 
                   rate={item.rate}
                   rateCount={item.rateCount}
@@ -368,7 +383,8 @@ export default function Tour({navigation}) {
                   location={item.location}
                   travelTime={item.travelTime}
                   startTime={item.startTime}
-                  price={'\u20a6'+parseInt(item.price)}
+                  price={'\u20a6'+parseInt(item.price).toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                   rate={item.rate}
                   rateCount={item.rateCount}
                   numReviews={item.numReviews}

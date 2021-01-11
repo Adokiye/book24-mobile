@@ -21,6 +21,8 @@ import Car from '@screens/Car';
 import OverViewCar from '@screens/OverViewCar';
 import Hotel from '@screens/Hotel';
 import Activity from '@screens/Activity';
+import ActivityDetail from '@screens/ActivityDetail';
+import RentalDetail from '@screens/RentalDetail';
 import Rental from '@screens/Rental';
 import Review from '@screens/Review';
 import Feedback from '@screens/Feedback';
@@ -108,6 +110,9 @@ export default function Main() {
       <MainStack.Screen name="OverViewCar" component={OverViewCar} />
       <MainStack.Screen name="Hotel" component={Hotel} />
       <MainStack.Screen name="Rental" component={Rental} />
+      <MainStack.Screen name="RentalDetail" component={RentalDetail} />
+      <MainStack.Screen name="ActivityDetail" component={ActivityDetail} />
+
       <MainStack.Screen name="Review" component={Review} />
       <MainStack.Screen name="Feedback" component={Feedback} />
       <MainStack.Screen name="Messages" component={Messages} />

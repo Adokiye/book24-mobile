@@ -162,8 +162,7 @@ export default function ActivityDetail({ navigation, route }) {
   const marginTopBanner = heightImageBanner - heightHeader - 40;
 
   const average_price =
-    item.rooms.reduce((a, b) => a + (parseInt(b["price"]) || 0), 0) /
-    item.rooms.length;
+    item.price;
 console.log(item.images[0].url);
   return (
     <View style={{ flex: 1 }}>
@@ -253,7 +252,7 @@ console.log(item.images[0].url);
                   textAlign: "center",
                 }}
               >
-                {item.bio}
+                {item.description}
               </Text>
             </View>
             {/* Rating Review */}

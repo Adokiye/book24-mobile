@@ -132,7 +132,7 @@ export default function Activity({navigation}) {
                   image={item.images[0].url}
                   name={item.name}
                   location={item.address}
-                  price={'\u20a6' + item.rooms[0].price}
+                  price={null}
                   //available={item.available}
                   rate={item.rate}
                   rateStatus={item.rateStatus}
@@ -142,7 +142,7 @@ export default function Activity({navigation}) {
                   style={{
                     paddingBottom: 10,
                   }}
-                  onPress={() => navigation.navigate('HotelDetail', {item})}
+                  onPress={() => navigation.navigate('ActivityDetail', {item})}
                   onPressTag={() => navigation.navigate('Review')}
                 />
               )}
@@ -203,14 +203,14 @@ export default function Activity({navigation}) {
                   image={item.images[0].url}
                   name={item.name}
                   location={item.address}
-                  price={'\u20a6' + item.rooms[0].price}
+                  price={null}
                   //available={item.available}
                   rate={item.rate}
                   rateStatus={item.rateStatus}
                   numReviews={item.numReviews}
                   services={item.features}
                   hotel_type={item.hotel_type}
-                  onPress={() => navigation.navigate('HotelDetail', {item})}
+                  onPress={() => navigation.navigate('ActivityDetail', {item})}
                   style={{
                     marginBottom: 15,
                     marginLeft: 15,
@@ -271,7 +271,7 @@ export default function Activity({navigation}) {
                   image={item.images[0].url}
                   name={item.name}
                   location={item.address}
-                  price={'\u20a6' + item.rooms[0].price}
+                  price={null}
                   //available={item.available}
                   rate={item.rate}
                   rateStatus={item.rateStatus}
@@ -281,7 +281,7 @@ export default function Activity({navigation}) {
                   style={{
                     paddingBottom: 10,
                   }}
-                  onPress={() => navigation.navigate('HotelDetail', {item})}
+                  onPress={() => navigation.navigate('ActivityDetail', {item})}
                   onPressTag={() => navigation.navigate('Review')}
                 />
               )}
@@ -349,7 +349,7 @@ export default function Activity({navigation}) {
                   style={{
                     marginBottom: 10,
                   }}
-                  onPress={() => navigation.navigate('HotelDetail', {item})}
+                  onPress={() => navigation.navigate('ActivityDetail', {item})}
                   onPressTag={() => navigation.navigate('Preview')}
                 />
               )}

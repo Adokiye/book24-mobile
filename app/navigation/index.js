@@ -45,15 +45,8 @@ export default function Navigator() {
   });
 
   useEffect(() => {
-    // i18n.use(initReactI18next).init({
-    //   resources: BaseSetting.resourcesLanguage,
-    //   lng: storeLanguage ?? BaseSetting.defaultLanguage,
-    //   fallbackLng: BaseSetting.defaultLanguage,
-    // });
-  SplashScreen.hide();
-    // StatusBar.setBackgroundColor(colors.primary, true);
-    // StatusBar.setBarStyle(isDarkMode ? 'light-content' : 'dark-content', true);
-  });
+
+  }, []);
 
   const initialSetup = async()=>{
 
@@ -65,7 +58,7 @@ export default function Navigator() {
         <RootStack.Navigator
           mode="modal"
           headerMode="none"
-          initialRouteName="Main">
+          initialRouteName="Loading">
           <RootStack.Screen
             name="Loading"
             component={Loading}
